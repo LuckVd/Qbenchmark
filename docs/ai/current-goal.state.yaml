@@ -1,29 +1,26 @@
-goal_id: G01
-title: 反序列化漏洞（高危）- 添加 Jackson、Fastjson、Shiro、Cookie 反序列化漏洞
+goal_id: G02
+title: XXE 漏洞（高危）- 添加 XMLReader、SAXBuilder、DocumentBuilder XXE 漏洞
 stage: complete
 status: done
-selected_option: full_4_types
+selected_option: full_3_types
 design_confirmed: true
 blocked_by: []
 open_questions: []
 implementation_steps:
-  - 更新 pom.xml 添加依赖
-  - 创建 DeserializeController.java
-  - 创建 FastjsonController.java
-  - 创建 ShiroController.java
-  - 创建验证 Payload 文件
-  - 更新验证脚本
+  - 创建 XXEController.java
+  - 实现 3 个 XXE 端点
+  - 创建 validation/payloads/xxe_payloads.txt
+  - 更新 validation/quick_validate.sh 添加 XXE 测试
   - 编译测试
 test_scope:
-  - 使用 ysoserial 生成 payload 测试 Cookie 反序列化
-  - 使用 JSON payload 测试 Jackson 反序列化
-  - 使用 @type payload 测试 Fastjson 反序列化
-  - 使用 Shiro 默认密钥测试 rememberMe 反序列化
+  - XMLReader XXE 读取 /etc/passwd ✅
+  - SAXBuilder XXE 读取 /etc/passwd ✅ (成功泄露文件内容)
+  - DocumentBuilder XXE 读取 /etc/passwd ✅ (成功泄露文件内容)
 security_blockers: []
 dead_code_actions: []
 goal_candidates:
-  - G01: 反序列化漏洞（Jackson, Fastjson, Shiro, Cookie）- 当前实现中
-  - G02: XXE 漏洞（XMLReader, SAXBuilder, DocumentBuilder）
+  - G01: 反序列化漏洞（Jackson, Fastjson, Shiro, Cookie）- 已完成
+  - G02: XXE 漏洞（XMLReader, SAXBuilder, DocumentBuilder）- 已完成
   - G03: 表达式注入（SpEL, QLExpress）
   - G04: 模板注入（Velocity, FreeMarker）
   - G05: Web 安全漏洞（URL 重定向, 文件上传, JWT, CORS, CSRF, CRLF, Cookies）

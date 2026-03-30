@@ -2,6 +2,23 @@
 
 ## 2026-03-30
 
+- Goal ID: G02 (实现完成)
+- Summary: 实现 XXE 漏洞（XMLReader、SAXBuilder、DocumentBuilder）
+- Impact: `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Changes:
+  - 创建 XXEController.java：3 种 XXE 漏洞端点
+  - 创建 validation/payloads/xxe_payloads.txt
+  - 更新 validation/quick_validate.sh：添加 XXE 端点验证
+- Tests: 端点验证通过，成功读取 /etc/passwd
+  - /xxe/xmlReader/vuln ✅
+  - /xxe/saxBuilder/vuln ✅ (成功泄露文件内容)
+  - /xxe/documentBuilder/vuln ✅ (成功泄露文件内容)
+- Dead Code: not run
+- Security: not run
+- Commit Status: not committed
+
+## 2026-03-30
+
 - Goal ID: G01 (实现完成)
 - Summary: 实现反序列化漏洞（Jackson、Fastjson、Shiro、Cookie）
 - Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`

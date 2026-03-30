@@ -87,10 +87,10 @@
 | G01 | G01-S02 | Fastjson 反序列化 | 实现 `/fastjson/deserialize` 端点 | done | G00 | 需添加 fastjson 依赖 | accepted | passed | 2026-03-30 |  | autoType |
 | G01 | G01-S03 | Shiro 反序列化 | 实现 `/shiro/deserialize` 端点 | done | G00 | 需添加 Shiro 依赖 | accepted | passed | 2026-03-30 |  | rememberMe |
 | G01 | G01-S04 | Cookie 反序列化 | 实现 `/deserialize/rememberMe/vuln` 端点 | done | G01-S01 |  | accepted | passed | 2026-03-30 |  | ysoserial payload |
-| G02 |  | XXE 漏洞 | 添加 XML 外部实体注入漏洞 | planned | G00 |  | pending | not_started |  |  | 文件读取/SSRF |
-| G02 | G02-S01 | XMLReader XXE | 实现 `/xxe/xmlReader/vuln` 端点 | planned | G00 |  | pending | not_started |  |  | 多种解析器 |
-| G02 | G02-S02 | SAXBuilder XXE | 实现 `/xxe/SAXBuilder/vuln` 端点 | planned | G00 | 需 JDOM2 依赖 | pending | not_started |  |  | DOM4J/JDOM2 |
-| G02 | G02-S03 | DocumentBuilder XXE | 实现 `/xxe/DocumentBuilder/vuln` 端点 | planned | G00 |  | pending | not_started |  |  | 标准解析器 |
+| G02 |  | XXE 漏洞 | 添加 XML 外部实体注入漏洞 | done | G00 |  | accepted | passed | 2026-03-30 |  | 文件读取/SSRF |
+| G02 | G02-S01 | XMLReader XXE | 实现 `/xxe/xmlReader/vuln` 端点 | done | G00 |  | accepted | passed | 2026-03-30 |  | 多种解析器 |
+| G02 | G02-S02 | SAXBuilder XXE | 实现 `/xxe/SAXBuilder/vuln` 端点 | done | G00 | 需 JDOM2 依赖 | accepted | passed | 2026-03-30 |  | DOM4J/JDOM2 |
+| G02 | G02-S03 | DocumentBuilder XXE | 实现 `/xxe/DocumentBuilder/vuln` 端点 | done | G00 |  | accepted | passed | 2026-03-30 |  | 标准解析器 |
 | G03 |  | 表达式注入 | 添加 SpEL、QLExpress 注入漏洞 | planned | G00 |  | pending | not_started |  |  | RCE |
 | G03 | G03-S01 | SpEL 注入 | 实现 `/spel/vuln1` 和 `/spel/vuln2` | planned | G00 | Spring 自带 | pending | not_started |  |  | StandardEvaluationContext |
 | G03 | G03-S02 | QLExpress 注入 | 实现 `/qlexpress/vuln` 端点 | planned | G00 | 需 QLExpress 依赖 | pending | not_started |  |  | 阿里表达式引擎 |

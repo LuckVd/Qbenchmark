@@ -2,73 +2,61 @@
 
 ## Goal
 
-**G01: 反序列化漏洞（高危）** - 添加 Jackson、Fastjson、Shiro、Cookie 反序列化漏洞
+**G02: XXE 漏洞（高危）** - 添加 XMLReader、SAXBuilder、DocumentBuilder XXE 漏洞
 
 ## Current State
 
-设计已确认，开始实现阶段。
+实现已完成，测试通过。
 
 ## Confirmed Approach
 
-**范围：** 全部 4 种反序列化漏洞
-**依赖：** 完整依赖（Commons Collections、Fastjson、Shiro）
+**范围：** 全部 3 种 XXE 漏洞
+**依赖：** 使用现有依赖（dom4j 2.0.0、jdom2 2.0.6）
 **版本：** 仅漏洞版本（不实现安全版本）
 
 ## Acceptance Criteria
 
-- [x] pom.xml 包含所有必需依赖
-- [x] DeserializeController.java 创建成功
-- [x] FastjsonController.java 创建成功
-- [x] ShiroController.java 创建成功
-- [x] 4 个端点均可访问（返回预期响应）
-- [x] 验证 Payload 文件已创建
-- [x] 验证脚本已更新
+- [x] 创建 XXEController.java
+- [x] 实现 3 个 XXE 端点
+- [x] 创建 validation/payloads/xxe_payloads.txt
+- [x] 更新 validation/quick_validate.sh 添加 XXE 测试
+- [x] 所有端点可访问并响应预期结果
 
 ## Test Plan
 
-- 使用 ysoserial 生成 payload 测试 Cookie 反序列化
-- 使用 JSON payload 测试 Jackson 反序列化
-- 使用 @type payload 测试 Fastjson 反序列化
-- 使用 Shiro 默认密钥测试 rememberMe 反序列化
+- XMLReader XXE 读取 /etc/passwd ✅
+- SAXBuilder XXE 读取 /etc/passwd ✅ (成功泄露文件内容)
+- DocumentBuilder XXE 读取 /etc/passwd ✅ (成功泄露文件内容)
 
 ## Implementation Plan
 
-### Task 1: 更新 pom.xml 添加依赖
+### Task 1: 创建 XXEController.java
 
-依赖列表：
-- fastjson 1.2.24
-- shiro-core 1.2.4
-- commons-collections 3.1
-- dom4j 2.0.0
+文件路径: java-vuln-lab/src/main/java/com/vulnlab/controller/XXEController.java
 
-### Task 2: 创建 DeserializeController.java
+端点列表:
+- `/xxe/xmlReader/vuln` - XMLReader XXE
+- `/xxe/saxBuilder/vuln` - SAXBuilder XXE (JDOM2)
+- `/xxe/documentBuilder/vuln` - DocumentBuilder XXE
 
-端点：
-- `/deserialize/jackson` - Jackson enableDefaultTyping 反序列化
-- `/deserialize/rememberMe` - Cookie 反序列化
+攻击向量:
+- 文件读取: <!ENTITY xxe SYSTEM "file:///etc/passwd">
+- SSRF: <!ENTITY xxe SYSTEM "http://127.0.0.1:8080">
 
-### Task 3: 创建 FastjsonController.java
+### Task 2: 创建验证 Payload 文件
 
-端点：
-- `/fastjson/deserialize` - Fastjson autoType 反序列化
+文件路径: validation/payloads/xxe_payloads.txt
 
-### Task 4: 创建 ShiroController.java
+包含 3 种解析器的 XXE payload 示例
 
-端点：
-- `/shiro/deserialize` - Shiro rememberMe 反序列化
+### Task 3: 更新验证脚本
 
-### Task 5: 创建验证 Payload 文件
+在 validation/quick_validate.sh 添加 XXE 测试
 
-- validation/payloads/deserialize_payloads.txt
+### Task 4: 编译测试
 
-### Task 6: 更新验证脚本
-
-- 在 quick_validate.sh 添加反序列化测试
-
-### Task 7: 编译测试
-
-- mvn clean compile
-- 启动应用验证端点可访问
+- mvn clean compile ✅
+- 启动应用验证端点可访问 ✅
 
 ## Blockers
 
@@ -81,3 +69,4 @@
 ## Sync Notes
 
 - 2026-03-30: 设计已确认，开始实现
+- 2026-03-30: 实现完成，3 个端点测试通过
