@@ -255,6 +255,60 @@ else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
 fi
 
+# 26. URL 重定向 - sendRedirect
+echo -e "\n【26】URL 重定向 (sendRedirect)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/urlRedirect/redirect?url=http://example.com")
+if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ]; then
+    echo -e "$PASS 端点可用 - URL 重定向"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 27. 文件上传
+echo -e "\n【27】文件上传端点"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/file/list")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - 文件上传"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 28. JWT 漏洞
+echo -e "\n【28】JWT 生成端点"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/jwt/generate?username=test")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - JWT 漏洞"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 29. CORS 漏洞
+echo -e "\n【29】CORS 漏洞"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/cors/simple")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - CORS 漏洞"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 30. CRLF 注入
+echo -e "\n【30】CRLF 注入"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/crlf/injection?name=test")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - CRLF 注入"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 31. CSRF 漏洞
+echo -e "\n【31】CSRF 漏洞"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/csrf/vuln?action=test")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - CSRF 漏洞"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
 echo ""
 echo "========================================"
 echo "   验证完成"
@@ -270,5 +324,6 @@ echo "  - path_traversal_payloads.txt"
 echo "  - deserialize_payloads.txt"
 echo "  - xxe_payloads.txt"
 echo "  - expression_payloads.txt"
-echo "  - ssti_payloads.txt (新增)"
+echo "  - ssti_payloads.txt"
+echo "  - web_vuln_payloads.txt (新增)"
 echo ""

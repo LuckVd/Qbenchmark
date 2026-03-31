@@ -17,7 +17,7 @@
 
 **当前阶段：** feature-development
 
-**当前目标：** G04 模板注入
+**当前目标：** G05 Web 安全漏洞
 
 **主文档说明：** 本文件负责记录总体设计、阶段目标和实现进度。
 
@@ -96,15 +96,15 @@
 | G03 |  | 表达式注入 | 添加 SpEL、QLExpress 注入漏洞 | done | G00 | 需添加 QLExpress 依赖 | accepted | passed | 2026-03-31 |  | RCE |
 | G03 | G03-S01 | SpEL 注入 | 实现 `/spel/vuln1` 和 `/spel/vuln2` | done | G00 | Spring 自带 | accepted | passed | 2026-03-31 |  | StandardEvaluationContext |
 | G03 | G03-S02 | QLExpress 注入 | 实现 `/qlexpress/vuln` 和 `/vuln2` 端点 | done | G00 | 需 QLExpress 依赖 | accepted | passed | 2026-03-31 |  | 阿里表达式引擎 |
-| G04 |  | 模板注入 | 添加 Velocity、FreeMarker SSTI | design | G00 |  | pending | not_started |  |  | RCE |
-| G04 | G04-S01 | Velocity SSTI | 实现 `/ssti/velocity` 端点 | design | G00 | 需 Velocity 依赖 | pending | not_started |  |  | Velocity.evaluate |
-| G04 | G04-S02 | FreeMarker SSTI | 实现 `/ssti/freemarker` 端点 | design | G00 | 需 FreeMarker 依赖 | pending | not_started |  |  | 模板注入 |
-| G05 |  | Web 安全漏洞 | 添加 URL 重定向、文件上传等 Web 漏洞 | planned | G00 |  | pending | not_started |  |  | 钓鱼/Shell |
-| G05 | G05-S01 | URL 重定向 | 实现 `/urlRedirect/*` 三种方式 | planned | G00 |  | pending | not_started |  |  | redirect/setHeader/sendRedirect |
-| G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | planned | G00 |  | pending | not_started |  |  | Webshell 上传 |
-| G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | planned | G00 | 需 JWT 依赖 | pending | not_started |  |  | JWT 安全 |
-| G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | planned | G00 |  | pending | not_started |  |  | 浏览器安全 |
-| G05 | G05-S05 | CRLF 注入 | 实现 `/crlf injection` 端点 | planned | G00 |  | pending | not_started |  |  | HTTP 响应拆分 |
+| G04 |  | 模板注入 | 添加 Velocity、FreeMarker SSTI | done | G00 |  | accepted | passed | 2026-03-31 |  | RCE |
+| G04 | G04-S01 | Velocity SSTI | 实现 `/ssti/velocity` 端点 | done | G00 | 需 Velocity 依赖 | accepted | passed | 2026-03-31 |  | Velocity.evaluate |
+| G04 | G04-S02 | FreeMarker SSTI | 实现 `/ssti/freemarker` 端点 | done | G00 | 需 FreeMarker 依赖 | accepted | passed | 2026-03-31 |  | 模板注入 |
+| G05 |  | Web 安全漏洞 | 添加 URL 重定向、文件上传等 Web 漏洞 | design | G00 |  | pending | not_started |  |  | 钓鱼/Shell |
+| G05 | G05-S01 | URL 重定向 | 实现 `/urlRedirect/*` 三种方式 | design | G00 |  | pending | not_started |  |  | redirect/setHeader/sendRedirect |
+| G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | design | G00 |  | pending | not_started |  |  | Webshell 上传 |
+| G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | design | G00 | 需 JWT 依赖 | pending | not_started |  |  | JWT 安全 |
+| G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | design | G00 |  | pending | not_started |  |  | 浏览器安全 |
+| G05 | G05-S05 | CRLF 注入 | 实现 `/crlf injection` 端点 | design | G00 |  | pending | not_started |  |  | HTTP 响应拆分 |
 | G06 |  | 验证测试完善 | 为所有新增漏洞添加验证脚本 | planned | G01,G02,G03,G04,G05 |  | pending | not_started |  |  | 测试覆盖率 |
 
 ## 6. 开放风险与阻塞

