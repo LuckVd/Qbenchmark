@@ -1,6 +1,7 @@
 package com.vulnlab.controller;
 
 import com.vulnlab.util.CommandUtil;
+import groovy.lang.GroovyShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -188,5 +189,65 @@ public class CommandInjectionController {
         }
 
         return result;
+    }
+
+    /**
+     * Groovy 脚本引擎注入漏洞
+     *
+     * 漏洞原理：使用 GroovyShell.evaluate() 直接执行用户输入的 Groovy 代码
+     * 攻击向量：通过 Groovy 脚本语法执行任意系统命令
+     *
+     * 测试用例：
+     * - 正常: http://localhost:8080/cmd/groovy?cmd=1+1
+     * - 注入: http://localhost:8080/cmd/groovy?cmd="whoami".execute().text
+     * - 注入: http://localhost:8080/cmd/groovy?cmd="ls -la".execute().text
+     * - 注入: http://localhost:8080/cmd/groovy?cmd="calc.exe".execute()
+     *
+     * @param cmd Groovy 代码
+     * @return 执行结果
+     */
+    @GetMapping("/groovy")
+    public String groovyVuln(@RequestParam("cmd") String cmd) {
+        logger.info("Groovy command: {}", cmd);
+
+        try {
+            // 漏洞代码：直接执行用户输入的 Groovy 代码
+            GroovyShell shell = new GroovyShell();
+            Object result = shell.evaluate(cmd);
+
+            logger.info("Groovy result: {}", result);
+            return "Groovy executed: " + result;
+        } catch (Exception e) {
+            logger.error("Groovy execution error", e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    /**
+     * Groovy 脚本引擎安全版本示例（用于对比）
+     *
+     * @param cmd Groovy 代码
+     * @return 执行结果或错误提示
+     */
+    @GetMapping("/groovy/safe")
+    public String groovySafe(@RequestParam("cmd") String cmd) {
+        logger.info("Groovy safe command: {}", cmd);
+
+        // 安全代码：使用白名单限制可执行的命令
+        String[] allowedCommands = {"1+1", "2*2", "3-1", "\"test\"", "Math.PI"};
+
+        for (String allowed : allowedCommands) {
+            if (allowed.equals(cmd)) {
+                try {
+                    GroovyShell shell = new GroovyShell();
+                    Object result = shell.evaluate(cmd);
+                    return "Groovy safe executed: " + result;
+                } catch (Exception e) {
+                    return "Error: " + e.getMessage();
+                }
+            }
+        }
+
+        return "Command not allowed. Only safe commands are permitted.";
     }
 }

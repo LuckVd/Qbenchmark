@@ -178,6 +178,14 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.27</version>
         </dependency>
+
+        <!-- Groovy 2.5.6 (漏洞版本，用于脚本引擎注入) -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.5.6</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 
     <build>

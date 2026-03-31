@@ -1,5 +1,24 @@
 # Change Log
 
+## 2026-03-31 (本次会话 - G09 脚本引擎注入)
+
+- Goal ID: G09 (脚本引擎注入)
+- Summary: 添加 Groovy 脚本引擎注入漏洞
+- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/CommandInjectionController.java`
+- Changes:
+  - **pom.xml**: 添加 Groovy 2.5.6 依赖
+  - **CommandInjectionController.java**: 扩展控制器，添加 2 个端点
+    - `/cmd/groovy` - Groovy 脚本引擎注入漏洞
+    - `/cmd/groovy/safe` - Groovy 安全版本（对比）
+- Tests: 全部通过
+  - Maven 构建: ✅
+  - 应用启动: ✅
+  - Groovy 数学运算: ✅ Math.abs(-5) 返回 5
+  - Groovy 字符串操作: ✅ "hello".toUpperCase() 返回 HELLO
+  - Groovy 命令执行: ✅ "whoami".execute().text 返回 root
+- Commit: pending
+- Deploy: pending
+
 ## 2026-03-31 (本次会话 - G08 扩展反序列化漏洞)
 
 - Goal ID: G08 (扩展反序列化漏洞)

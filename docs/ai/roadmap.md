@@ -137,8 +137,8 @@
 | G08 | G08-S01 | XStream 反序列化 | 实现 `/deserialize/xstream` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | XStream 1.4.10 |
 | G08 | G08-S02 | SnakeYaml 反序列化 | 实现 `/deserialize/yaml` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | SnakeYaml 1.27 |
 | G08 | G08-S03 | XMLDecoder 反序列化 | 实现 `/deserialize/xmldecoder` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | Java 原生 |
-| G09 |  | 脚本引擎注入 | 添加 Groovy 脚本引擎注入漏洞 | later |  |  | pending | pending |  |  | 代码执行 |
-| G09 | G09-S01 | Groovy 注入 | 实现 `/rce/groovy` 端点 | later |  |  | pending | pending |  |  | Groovy 2.5.6 |
+| G09 |  | 脚本引擎注入 | 添加 Groovy 脚本引擎注入漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 代码执行 |
+| G09 | G09-S01 | Groovy 注入 | 实现 `/cmd/groovy` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | Groovy 2.5.6 |
 | G10 |  | 其他注入类漏洞 | 添加 XPath 注入、IP 伪造等 | later |  |  | pending | pending |  |  | 补充覆盖 |
 | G10 | G10-S01 | XPath 注入 | 实现 `/xpath` 端点 | later |  |  | pending | pending |  |  | XML 查询注入 |
 | G10 | G10-S02 | IP 伪造 | 实现 `/ipspoof` 端点 | later |  |  | pending | pending |  |  | HTTP 头伪造 |
