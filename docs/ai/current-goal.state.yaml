@@ -11,7 +11,8 @@ security_blockers: []
 dead_code_actions: []
 goal_candidates:
   - 所有计划目标 (G01-G10) 已完成
-sync_status: pending
+sync_status: synced
+last_synced_commit: 6420461
 last_check_at: '2026-03-31'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'

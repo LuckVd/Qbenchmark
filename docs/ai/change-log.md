@@ -20,8 +20,8 @@
   - 应用启动: ✅
   - XPath 注入: ✅ `admin' or '1'='1` 绕过认证
   - IP 伪造: ✅ X-Forwarded-For: 127.0.0.1 绕过限制
-- Commit: pending
-- Deploy: pending
+- Commit: 6420461
+- Deploy: pushed to origin/master
 
 ## 2026-03-31 (本次会话 - G09 脚本引擎注入)
 
