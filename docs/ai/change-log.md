@@ -16,8 +16,8 @@
   - Groovy 数学运算: ✅ Math.abs(-5) 返回 5
   - Groovy 字符串操作: ✅ "hello".toUpperCase() 返回 HELLO
   - Groovy 命令执行: ✅ "whoami".execute().text 返回 root
-- Commit: pending
-- Deploy: pending
+- Commit: 3742f57
+- Deploy: pushed to origin/master
 
 ## 2026-03-31 (本次会话 - G08 扩展反序列化漏洞)
 
