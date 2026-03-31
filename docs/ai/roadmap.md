@@ -157,20 +157,20 @@
 | G15 |  | Logic Flaw（中危） | 添加业务逻辑漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 业务安全 |
 | G15 | G15-S01 | 支付逻辑漏洞 | 实现 `/logic/payment` 端点 | done | G15 |  |  | accepted | passed | 2026-03-31 |  | 金额篡改 |
 | G15 | G15-S02 | 验证码绕过 | 实现 `/logic/captcha` 端点 | done | G15 |  |  | accepted | passed | 2026-03-31 |  | 验证码复用/可预测 |
-| G16 |  | RMI 漏洞（中危） | 添加 RMI Registry 反序列化 | pending | G11 |  |  |  |  |  |  | RMI 服务端 |
-| G16 | G16-S01 | RMI Registry 漏洞 | 实现 RMI 服务端和客户端 | pending | G16 |  |  |  |  |  |  | 远程反序列化 |
-| G17 |  | Login Bypass（中危） | 添加认证绕过漏洞 | pending |  |  |  |  |  |  |  | 认证安全 |
-| G17 | G17-S01 | SQL 登录绕过 | 实现 `/login/sqlbypass` 端点 | pending | G17 |  |  |  |  |  |  |万能密码 |
-| G17 | G17-S02 | JWT 绕过 | 实现 `/login/jwtbypass` 端点 | pending | G17 |  |  |  |  |  |  | 签名绕过 |
-| G18 |  | Unauthorized Access（中危） | 添加未授权访问 | pending |  |  |  |  |  |  |  | 访问控制 |
-| G18 | G18-S01 | 路径遍历越权 | 实现 `/admin/dashboard` 等端点 | pending | G18 |  |  |  |  |  |  | 未鉴权访问 |
-| G19 |  | Password Reset（低危） | 添加密码重置漏洞 | pending |  |  |  |  |  |  |  | 账户安全 |
-| G19 | G19-S01 | Host 注入 | 实现 `/reset/token` 端点 | pending | G19 |  |  |  |  |  |  | Token 泄露/可预测 |
-| G20 |  | CSV Injection（低危） | 添加 CSV 注入漏洞 | pending |  |  |  |  |  |  |  | 数据导出 |
-| G20 | G20-S01 | CSV 公式注入 | 实现 `/export/csv` 端点 | pending | G20 |  |  |  |  |  |  | Excel DDE 执行 |
-| G21 |  | Blacklist Bypass（低危） | 添加黑名单绕过技巧 | pending |  |  |  |  |  |  |  | 绕过技巧 |
-| G21 | G21-S01 | 文件扩展名绕过 | 实现 `/bypass/extension` 端点 | pending | G21 |  |  |  |  |  |  | 多重后缀 |
-| G21 | G21-S02 | MIME 类型绕过 | 实现 `/bypass/mime` 端点 | pending | G21 |  |  |  |  |  |  | Content-Type 伪造 |
+| G16 |  | RMI 漏洞（中危） | 添加 RMI Registry 反序列化 | done | G11 |  | accepted | passed | 2026-03-31 |  | RMI 服务端 |
+| G16 | G16-S01 | RMI Registry 漏洞 | 实现 RMI 服务端和客户端 | done | G16 |  |  | accepted | passed | 2026-03-31 |  | 远程反序列化 |
+| G17 |  | Login Bypass（中危） | 添加认证绕过漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 认证安全 |
+| G17 | G17-S01 | SQL 登录绕过 | 实现 `/login/sqlbypass` 端点 | done | G17 |  |  | accepted | passed | 2026-03-31 |  | 万能密码 |
+| G17 | G17-S02 | JWT 绕过 | 实现 `/login/jwtbypass` 端点 | done | G17 |  |  | accepted | passed | 2026-03-31 |  | 签名绕过 |
+| G18 |  | Unauthorized Access（中危） | 添加未授权访问 | done |  |  | accepted | passed | 2026-03-31 |  | 访问控制 |
+| G18 | G18-S01 | 路径遍历越权 | 实现 `/admin/dashboard` 等端点 | done | G18 |  |  | accepted | passed | 2026-03-31 |  | 未鉴权访问 |
+| G19 |  | Password Reset（低危） | 添加密码重置漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 账户安全 |
+| G19 | G19-S01 | Host 注入 | 实现 `/reset/token` 端点 | done | G19 |  |  | accepted | passed | 2026-03-31 |  | Token 泄露/可预测 |
+| G20 |  | CSV Injection（低危） | 添加 CSV 注入漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 数据导出 |
+| G20 | G20-S01 | CSV 公式注入 | 实现 `/export/csv` 端点 | done | G20 |  |  | accepted | passed | 2026-03-31 |  | Excel DDE 执行 |
+| G21 |  | Blacklist Bypass（低危） | 添加黑名单绕过技巧 | done |  |  | accepted | passed | 2026-03-31 |  | 绕过技巧 |
+| G21 | G21-S01 | 文件扩展名绕过 | 实现 `/bypass/extension` 端点 | done | G21 |  |  | accepted | passed | 2026-03-31 |  | 多重后缀 |
+| G21 | G21-S02 | MIME 类型绕过 | 实现 `/bypass/mime` 端点 | done | G21 |  |  | accepted | passed | 2026-03-31 |  | Content-Type 伪造 |
 
 ## 6. 开放风险与阻塞
 
