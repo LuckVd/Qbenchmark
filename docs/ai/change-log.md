@@ -21,8 +21,8 @@
   - Velocity POST: ✅ #set($x=100)$x
   - FreeMarker POST: ✅ ${"hello"?upper_case}
   - Ping 命令注入: ✅ |whoami 返回 root
-- Commit: pending
-- Deploy: pending
+- Commit: cf2d8af
+- Deploy: pushed to origin/master
 
 ## 2026-03-31 (之前会话 - G05 实现)
 
