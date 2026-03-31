@@ -17,6 +17,8 @@
 
 **当前阶段：** feature-development
 
+**当前目标：** G04 模板注入（待实现）
+
 **主文档说明：** 本文件负责记录总体设计、阶段目标和实现进度。
 
 ## 2. 总体技术架构
@@ -91,9 +93,9 @@
 | G02 | G02-S01 | XMLReader XXE | 实现 `/xxe/xmlReader/vuln` 端点 | done | G00 |  | accepted | passed | 2026-03-30 |  | 多种解析器 |
 | G02 | G02-S02 | SAXBuilder XXE | 实现 `/xxe/SAXBuilder/vuln` 端点 | done | G00 | 需 JDOM2 依赖 | accepted | passed | 2026-03-30 |  | DOM4J/JDOM2 |
 | G02 | G02-S03 | DocumentBuilder XXE | 实现 `/xxe/DocumentBuilder/vuln` 端点 | done | G00 |  | accepted | passed | 2026-03-30 |  | 标准解析器 |
-| G03 |  | 表达式注入 | 添加 SpEL、QLExpress 注入漏洞 | planned | G00 |  | pending | not_started |  |  | RCE |
-| G03 | G03-S01 | SpEL 注入 | 实现 `/spel/vuln1` 和 `/spel/vuln2` | planned | G00 | Spring 自带 | pending | not_started |  |  | StandardEvaluationContext |
-| G03 | G03-S02 | QLExpress 注入 | 实现 `/qlexpress/vuln` 端点 | planned | G00 | 需 QLExpress 依赖 | pending | not_started |  |  | 阿里表达式引擎 |
+| G03 |  | 表达式注入 | 添加 SpEL、QLExpress 注入漏洞 | done | G00 | 需添加 QLExpress 依赖 | accepted | passed | 2026-03-31 |  | RCE |
+| G03 | G03-S01 | SpEL 注入 | 实现 `/spel/vuln1` 和 `/spel/vuln2` | done | G00 | Spring 自带 | accepted | passed | 2026-03-31 |  | StandardEvaluationContext |
+| G03 | G03-S02 | QLExpress 注入 | 实现 `/qlexpress/vuln` 和 `/vuln2` 端点 | done | G00 | 需 QLExpress 依赖 | accepted | passed | 2026-03-31 |  | 阿里表达式引擎 |
 | G04 |  | 模板注入 | 添加 Velocity、FreeMarker SSTI | planned | G00 |  | pending | not_started |  |  | RCE |
 | G04 | G04-S01 | Velocity SSTI | 实现 `/ssti/velocity` 端点 | planned | G00 | 需 Velocity 依赖 | pending | not_started |  |  | Velocity.evaluate |
 | G04 | G04-S02 | FreeMarker SSTI | 实现 `/ssti/freemarker` 端点 | planned | G00 | 需 FreeMarker 依赖 | pending | not_started |  |  | 模板注入 |

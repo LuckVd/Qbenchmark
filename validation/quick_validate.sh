@@ -210,6 +210,33 @@ else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
 fi
 
+# 21. SpEL 表达式注入 - vuln1
+echo -e "\n【21】SpEL 表达式注入 (vuln1)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/spel/vuln1?expression=1+1")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - SpEL 表达式注入"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 22. SpEL 表达式注入 - vuln2 (模板)
+echo -e "\n【22】SpEL 表达式注入 (vuln2 模板)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/spel/vuln2?expression=#{1+1}")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - SpEL 模板表达式"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 23. QLExpress 表达式注入
+echo -e "\n【23】QLExpress 表达式注入"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/qlexpress/vuln?expression=1+1")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - QLExpress 表达式注入"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
 echo ""
 echo "========================================"
 echo "   验证完成"
@@ -223,5 +250,6 @@ echo "  - xss_payloads.txt"
 echo "  - log4shell_payloads.txt"
 echo "  - path_traversal_payloads.txt"
 echo "  - deserialize_payloads.txt"
-echo "  - xxe_payloads.txt (新增)"
+echo "  - xxe_payloads.txt"
+echo "  - expression_payloads.txt (新增)"
 echo ""

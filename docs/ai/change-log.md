@@ -1,5 +1,45 @@
 # Change Log
 
+## 2026-03-31
+
+- Goal ID: G03 (实现完成)
+- Summary: 实现表达式注入漏洞（SpEL、QLExpress）
+- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Changes:
+  - 添加依赖：QLExpress 3.3.4
+  - 创建 SpelController.java：2 个 SpEL 注入端点
+  - 创建 QLExpressController.java：2 个 QLExpress 注入端点
+  - 创建 validation/payloads/expression_payloads.txt
+  - 更新 validation/quick_validate.sh：添加表达式注入验证
+- Tests: 编译通过
+  - /spel/vuln1 ✅ (StandardEvaluationContext)
+  - /spel/vuln2 ✅ (模板解析)
+  - /qlexpress/vuln ✅ (无沙箱)
+  - /qlexpress/vuln2 ✅ (带上下文)
+- Dead Code: not run
+- Security: not run
+- Commit Status: not committed
+
+- Goal ID: G02 (同步完成)
+- Summary: 同步 G02 完成，提交 AI 工作流和基础代码
+- Impact: 完整仓库提交
+- Changes:
+  - 提交 AI 工作流骨架 (.claude/, docs/ai/)
+  - 提交基础漏洞代码和验证脚本
+  - 添加 .gitignore
+- Commit: 78fd119
+- Push: 已推送到远程
+
+- Goal ID: G03 (设计阶段)
+- Summary: 启动表达式注入目标设计
+- Impact: 待实现
+- Changes:
+  - 确认范围: SpEL (2个端点) + QLExpress (1个端点)
+  - 设计已写入 current-goal.md
+- Tests: pending
+- Dead Code: pending
+- Security: pending
+
 ## 2026-03-30
 
 - Goal ID: G02 (实现完成)

