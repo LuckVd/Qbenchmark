@@ -139,9 +139,9 @@
 | G08 | G08-S03 | XMLDecoder 反序列化 | 实现 `/deserialize/xmldecoder` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | Java 原生 |
 | G09 |  | 脚本引擎注入 | 添加 Groovy 脚本引擎注入漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 代码执行 |
 | G09 | G09-S01 | Groovy 注入 | 实现 `/cmd/groovy` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | Groovy 2.5.6 |
-| G10 |  | 其他注入类漏洞 | 添加 XPath 注入、IP 伪造等 | later |  |  | pending | pending |  |  | 补充覆盖 |
-| G10 | G10-S01 | XPath 注入 | 实现 `/xpath` 端点 | later |  |  | pending | pending |  |  | XML 查询注入 |
-| G10 | G10-S02 | IP 伪造 | 实现 `/ipspoof` 端点 | later |  |  | pending | pending |  |  | HTTP 头伪造 |
+| G10 |  | 其他注入类漏洞 | 添加 XPath 注入、IP 伪造等 | done |  |  | accepted | passed | 2026-03-31 |  | 补充覆盖 |
+| G10 | G10-S01 | XPath 注入 | 实现 `/xpath/login` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | JDK 原生 |
+| G10 | G10-S02 | IP 伪造 | 实现 `/ip/spoof` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | HTTP 头伪造 |
 
 ## 6. 开放风险与阻塞
 

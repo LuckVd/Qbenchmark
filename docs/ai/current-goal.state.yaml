@@ -1,7 +1,7 @@
 goal_id: none
 title: 无活跃目标
 stage: complete
-status: all_planned_goals_complete
+status: all_goals_completed
 design_confirmed: false
 blocked_by: []
 open_questions: []
@@ -10,10 +10,8 @@ test_scope: []
 security_blockers: []
 dead_code_actions: []
 goal_candidates:
-  - 所有计划目标 (G01-G09) 已完成
-  - 可使用 /ai-roadmap 添加新目标 (G10)
-sync_status: synced
-last_synced_commit: 3742f57
+  - 所有计划目标 (G01-G10) 已完成
+sync_status: pending
 last_check_at: '2026-03-31'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
@@ -27,4 +25,5 @@ completed_goals:
   - G06: 验证测试完善 (cf2d8af)
   - G07: 环境验证靶场 (fe42241)
   - G08: 扩展反序列化漏洞 (a09de39)
-  - G09: 脚本引擎注入 (pending)
+  - G09: 脚本引擎注入 (3742f57)
+  - G10: 其他注入类漏洞 (pending)

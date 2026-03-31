@@ -1,5 +1,28 @@
 # Change Log
 
+## 2026-03-31 (本次会话 - G10 其他注入类漏洞)
+
+- Goal ID: G10 (其他注入类漏洞)
+- Summary: 添加 XPath 注入、IP 伪造两种漏洞
+- Impact: `java-vuln-lab/src/main/java/com/vulnlab/controller/`
+- Changes:
+  - **XPathController.java**: 新增控制器，3 个端点
+    - `/xpath/login` - XPath 注入漏洞（绕过认证）
+    - `/xpath/login/safe` - XPath 安全版本（对比）
+    - `/xpath/info` - 漏洞说明
+  - **IPForgeryController.java**: 新增控制器，4 个端点
+    - `/ip/spoof` - IP 伪造漏洞（绕过 IP 限制）
+    - `/ip/safe` - 安全版本（使用 RemoteAddr）
+    - `/ip/headers` - 显示所有 IP 相关头
+    - `/ip/info` - 漏洞说明
+- Tests: 全部通过
+  - Maven 构建: ✅
+  - 应用启动: ✅
+  - XPath 注入: ✅ `admin' or '1'='1` 绕过认证
+  - IP 伪造: ✅ X-Forwarded-For: 127.0.0.1 绕过限制
+- Commit: pending
+- Deploy: pending
+
 ## 2026-03-31 (本次会话 - G09 脚本引擎注入)
 
 - Goal ID: G09 (脚本引擎注入)
