@@ -17,8 +17,8 @@
   - 应用启动: ✅
   - /info 端点: ✅
   - /ping 命令注入: ✅ `;whoami` 返回 root
-- Commit: pending
-- Deploy: pending
+- Commit: fe42241
+- Deploy: pushed to origin/master
 
 ## 2026-03-31 (本次会话 - G06 验证测试完善)
 

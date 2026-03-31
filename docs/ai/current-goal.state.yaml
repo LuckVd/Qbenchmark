@@ -1,7 +1,7 @@
 goal_id: none
 title: 无活跃目标
 stage: complete
-status: g07_completed
+status: all_planned_goals_complete
 design_confirmed: false
 blocked_by: []
 open_questions: []
@@ -10,8 +10,10 @@ test_scope: []
 security_blockers: []
 dead_code_actions: []
 goal_candidates:
-  - G07 已完成，可使用 /ai-roadmap 添加新目标
-sync_status: pending
+  - 所有计划目标 (G01-G07) 已完成
+  - 可使用 /ai-roadmap 添加新目标
+sync_status: synced
+last_synced_commit: fe42241
 last_check_at: '2026-03-31'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
@@ -23,4 +25,4 @@ completed_goals:
   - G04: 模板注入 (6a61481)
   - G05: Web 安全漏洞 (5247a5c)
   - G06: 验证测试完善 (cf2d8af)
-  - G07: 环境验证靶场 (pending)
+  - G07: 环境验证靶场 (fe42241)
