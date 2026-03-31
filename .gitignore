@@ -27,3 +27,6 @@ Thumbs.db
 java-vuln-lab/app.log
 java-vuln-lab/target/
 java-vuln-lab/reports/
+
+# Temporary files
+tmp

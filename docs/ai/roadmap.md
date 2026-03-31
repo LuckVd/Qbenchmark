@@ -87,6 +87,18 @@
 
 创建一个独立、简化的 Java 靶场，用于安全扫描器的环境构建检测。只保留单个漏洞端点，但保持完整的 Java 项目框架结构。
 
+### G08: 扩展反序列化漏洞（高危）
+
+添加 XStream、SnakeYaml、XMLDecoder 反序列化漏洞，完善 Java 反序列化攻击面覆盖。
+
+### G09: 脚本引擎注入（中危）
+
+添加 Groovy 脚本引擎注入漏洞，扩展脚本/表达式注入类别。
+
+### G10: 其他注入类漏洞（低-中危）
+
+添加 XPath 注入、IP 伪造等其他注入类漏洞。
+
 ## 5. 路线图进度表
 
 | 目标ID | 子目标ID | 名称 | 描述 | 状态 | 前置依赖 | 风险/阻塞 | 验收结果 | 测试状态 | 实现时间 | Commit ID | 备注 |
@@ -121,6 +133,15 @@
 | G07 | G07-S01 | 项目框架创建 | 创建完整的 Spring Boot 项目结构 | done |  |  | accepted | passed | 2026-03-31 |  | Maven/标准布局 |
 | G07 | G07-S02 | 命令注入端点 | 实现 /ping 命令注入端点 | done | G07-S01 |  | accepted | passed | 2026-03-31 |  | 无外部依赖 |
 | G07 | G07-S03 | 环境检测标记 | 添加 /info 版本标识端点 | done | G07-S01 |  | accepted | passed | 2026-03-31 |  | 扫描器识别 |
+| G08 |  | 扩展反序列化漏洞 | 添加 XStream、SnakeYaml、XMLDecoder 反序列化 | done |  |  | accepted | passed | 2026-03-31 |  | 高危 RCE |
+| G08 | G08-S01 | XStream 反序列化 | 实现 `/deserialize/xstream` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | XStream 1.4.10 |
+| G08 | G08-S02 | SnakeYaml 反序列化 | 实现 `/deserialize/yaml` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | SnakeYaml 1.27 |
+| G08 | G08-S03 | XMLDecoder 反序列化 | 实现 `/deserialize/xmldecoder` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | Java 原生 |
+| G09 |  | 脚本引擎注入 | 添加 Groovy 脚本引擎注入漏洞 | later |  |  | pending | pending |  |  | 代码执行 |
+| G09 | G09-S01 | Groovy 注入 | 实现 `/rce/groovy` 端点 | later |  |  | pending | pending |  |  | Groovy 2.5.6 |
+| G10 |  | 其他注入类漏洞 | 添加 XPath 注入、IP 伪造等 | later |  |  | pending | pending |  |  | 补充覆盖 |
+| G10 | G10-S01 | XPath 注入 | 实现 `/xpath` 端点 | later |  |  | pending | pending |  |  | XML 查询注入 |
+| G10 | G10-S02 | IP 伪造 | 实现 `/ipspoof` 端点 | later |  |  | pending | pending |  |  | HTTP 头伪造 |
 
 ## 6. 开放风险与阻塞
 

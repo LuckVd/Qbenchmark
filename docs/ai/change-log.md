@@ -1,5 +1,28 @@
 # Change Log
 
+## 2026-03-31 (本次会话 - G08 扩展反序列化漏洞)
+
+- Goal ID: G08 (扩展反序列化漏洞)
+- Summary: 添加 XStream、SnakeYaml、XMLDecoder 三种反序列化漏洞
+- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`
+- Changes:
+  - **pom.xml**: 添加 XStream 1.4.10 和 SnakeYaml 1.27 依赖
+  - **ExtendDeserializeController.java**: 新增控制器，6 个端点
+    - `/deserialize/xstream` - XStream 反序列化漏洞
+    - `/deserialize/xstream/safe` - XStream 安全版本（对比）
+    - `/deserialize/yaml` - SnakeYaml 反序列化漏洞
+    - `/deserialize/yaml/safe` - SnakeYaml 安全版本（对比）
+    - `/deserialize/xmldecoder` - XMLDecoder 反序列化漏洞
+    - `/deserialize/extend/info` - 依赖版本信息
+- Tests: 全部通过
+  - Maven 构建: ✅
+  - 应用启动: ✅
+  - XStream 端点: ✅ HashMap 反序列化成功
+  - SnakeYaml 端点: ✅ LinkedHashMap 反序列化成功
+  - XMLDecoder 端点: ✅ String 反序列化成功
+- Commit: pending
+- Deploy: pending
+
 ## 2026-03-31 (本次会话 - G07 环境验证靶场)
 
 - Goal ID: G07 (环境验证靶场)
