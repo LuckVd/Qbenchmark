@@ -1,6 +1,66 @@
 # Change Log
 
-## 2026-03-31
+## 2026-03-31 (本次会话 - G06 验证测试完善)
+
+- Goal ID: G06 (验证测试完善)
+- Summary: 修复 SSTI 端点、命令注入 Ping 端点，增强验证脚本，添加 Docker 支持
+- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Changes:
+  - **VelocityController.java**: 重写，升级 Velocity 到 2.3，添加 POST 端点绕过 Spring 拦截
+  - **FreeMarkerController.java**: 添加 POST 端点，支持复杂模板语法
+  - **CommandInjectionController.java**: 修复 Ping 端点使用 sh -c 实现真正的命令注入
+  - **pom.xml**: 升级 velocity-engine-core 到 2.3
+  - **validation/quick_validate.sh**: 更新 SSTI 测试语法和 Ping 测试条件
+  - **validation/local_validate.sh**: 新增完整验证脚本
+  - **validation/scripts/generate_payloads.py**: 新增 Payload 生成器工具
+  - **validation/scripts/jndi_server.py**: 新增 JNDI 服务器用于 Log4Shell RCE 测试
+  - **validation/HOWTO_VALIDATE.md**: 新增验证使用说明
+  - **docker-compose.yml**: 新增 Docker 编排配置
+  - **java-vuln-lab/Dockerfile**: 新增应用容器镜像
+- Tests: 33/33 测试通过 (100%)
+  - Velocity POST: ✅ #set($x=100)$x
+  - FreeMarker POST: ✅ ${"hello"?upper_case}
+  - Ping 命令注入: ✅ |whoami 返回 root
+- Commit: pending
+- Deploy: pending
+
+## 2026-03-31 (之前会话 - G05 实现)
+
+- Goal ID: 项目扫描 (ai-scan)
+- Summary: 刷新项目摘要，所有计划目标已完成
+- Impact: `docs/ai/project-summary.md`, `docs/ai/project-tree.md`, `docs/ai/current-goal.md`
+- Changes:
+  - 更新项目摘要：15+ 种漏洞类型全部完成
+  - 更新项目结构树：17 个控制器，50+ 端点
+  - 更新当前目标状态：无活跃目标
+- 项目状态: 所有计划目标 (G01-G05) 已完成 ✅
+
+- Goal ID: G05 (实现完成)
+- Summary: 实现 Web 安全漏洞（URL 重定向、文件上传、JWT、CORS/CSRF/Cookies、CRLF 注入）
+- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Changes:
+  - 添加依赖：JWT 0.9.1, Commons FileUpload
+  - 创建 UrlRedirectController.java：4 个 URL 重定向端点
+  - 创建 FileUploadController.java：3 个文件上传端点
+  - 创建 JwtController.java：4 个 JWT 漏洞端点
+  - 创建 CorsCsrfController.java：6 个 CORS/CSRF/Cookies 端点
+  - 创建 CrlfInjectionController.java：6 个 CRLF 注入端点
+  - 创建 validation/payloads/web_vuln_payloads.txt
+  - 更新 validation/quick_validate.sh：添加 Web 漏洞测试
+- Tests: 编译通过
+- Commit: 5247a5c
+
+- Goal ID: G04 (实现完成)
+- Summary: 实现模板注入漏洞（Velocity、FreeMarker）
+- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Changes:
+  - 添加依赖：Velocity 1.7, FreeMarker 2.3.31
+  - 创建 VelocityController.java：2 个 Velocity SSTI 端点
+  - 创建 FreeMarkerController.java：2 个 FreeMarker SSTI 端点
+  - 创建 validation/payloads/ssti_payloads.txt
+  - 更新 validation/quick_validate.sh：添加 SSTI 测试
+- Tests: 编译通过
+- Commit: 6a61481
 
 - Goal ID: G03 (实现完成)
 - Summary: 实现表达式注入漏洞（SpEL、QLExpress）

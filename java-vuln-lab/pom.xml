@@ -132,11 +132,11 @@
             <version>3.3.4</version>
         </dependency>
 
-        <!-- Velocity 1.7 (用于 SSTI) -->
+        <!-- Velocity 2.3 (用于 SSTI) -->
         <dependency>
             <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <artifactId>velocity-engine-core</artifactId>
+            <version>2.3</version>
         </dependency>
 
         <!-- FreeMarker 2.3.31 (用于 SSTI) -->

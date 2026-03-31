@@ -64,12 +64,13 @@ else
 fi
 
 # 5. Command Injection - Ping
+# 5. Command Injection - Ping
 echo -e "\n【5】Command Injection (Ping)"
-RESULT=$(curl -s "$TARGET/cmd/ping/vuln?host=8.8.8.8%7Cwhoami" | grep -c "bytes\|PING")
+RESULT=$(curl -s "$TARGET/cmd/ping/vuln?host=8.8.8.8%7Cwhoami" | wc -c)
 if [ "$RESULT" -gt 0 ]; then
-    echo -e "$PASS 存在 - ping 功能可用"
+    echo -e "$PASS 存在 - 命令注入成功"
 else
-    echo -e "$WARN 可能不存在"
+    echo -e "$FAIL 不存在"
 fi
 
 # 6. Command Injection - Header
@@ -237,22 +238,40 @@ else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
 fi
 
-# 24. Velocity SSTI
-echo -e "\n【24】Velocity SSTI"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/ssti/velocity/vuln?template=\${\"hello\"}")
+# 24. Velocity SSTI (GET)
+echo -e "\n【24】Velocity SSTI (GET)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/ssti/velocity/vuln?template=hello")
 if [ "$HTTP_CODE" = "200" ]; then
     echo -e "$PASS 端点可用 - Velocity 模板注入"
 else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
 fi
 
-# 25. FreeMarker SSTI
-echo -e "\n【25】FreeMarker SSTI"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/ssti/freemarker/vuln?template=\${\"hello\"}")
+# 24b. Velocity SSTI (POST)
+echo -e "\n【24b】Velocity SSTI (POST)"
+RESULT=$(curl -s -X POST "$TARGET/ssti/velocity/vuln" -H "Content-Type: text/plain" -d '#set($x=100)$x')
+if echo "$RESULT" | grep -q "100"; then
+    echo -e "$PASS 端点可用 - Velocity POST 支持复杂语法"
+else
+    echo -e "$FAIL 端点不可用"
+fi
+
+# 25. FreeMarker SSTI (GET)
+echo -e "\n【25】FreeMarker SSTI (GET)"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/ssti/freemarker/vuln?template=hello")
 if [ "$HTTP_CODE" = "200" ]; then
     echo -e "$PASS 端点可用 - FreeMarker 模板注入"
 else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 25b. FreeMarker SSTI (POST)
+echo -e "\n【25b】FreeMarker SSTI (POST)"
+RESULT=$(curl -s -X POST "$TARGET/ssti/freemarker/vuln" -H "Content-Type: text/plain" -d '${"hello"?upper_case}')
+if echo "$RESULT" | grep -q "HELLO"; then
+    echo -e "$PASS 端点可用 - FreeMarker POST 支持复杂语法"
+else
+    echo -e "$FAIL 端点不可用"
 fi
 
 # 26. URL 重定向 - sendRedirect

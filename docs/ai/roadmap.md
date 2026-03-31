@@ -17,7 +17,7 @@
 
 **当前阶段：** feature-development
 
-**当前目标：** G05 Web 安全漏洞
+**当前目标：** 无活跃目标（所有计划目标已完成）
 
 **主文档说明：** 本文件负责记录总体设计、阶段目标和实现进度。
 
@@ -47,7 +47,7 @@
 | 框架 | Spring Boot 2.7.18 |
 | 构建工具 | Maven |
 | 数据库 | MySQL 8.0, H2 (内存) |
-| 关键依赖 | Log4j 2.14.1 (漏洞版本), HttpClient, Commons Lang3 |
+| 关键依赖 | Log4j 2.14.1 (漏洞版本), HttpClient, Commons Lang3, Velocity 2.3, FreeMarker 2.3.31 |
 
 ## 3. 设计约束
 
@@ -75,14 +75,18 @@
 
 添加 Velocity、FreeMarker SSTI 漏洞。
 
-### G05: 其他安全漏洞（低-中危）
+### G05: Web 安全漏洞（低-中危）
 
 添加 URL 重定向、文件上传、JWT、CORS、CSRF、CRLF 注入、Cookies 等漏洞。
+
+### G06: 验证测试完善
+
+修复和增强验证测试套件，添加 Docker 部署支持。
 
 ## 5. 路线图进度表
 
 | 目标ID | 子目标ID | 名称 | 描述 | 状态 | 前置依赖 | 风险/阻塞 | 验收结果 | 测试状态 | 实现时间 | Commit ID | 备注 |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | G00 |  | 项目基础骨架 | 初始化仓库结构、基础配置和 AI 工作流 | done |  |  | accepted | passed | 2026-03-30 |  | 已有 6 种基础漏洞 |
 | G01 |  | 反序列化漏洞 | 添加 Jackson、Fastjson、Shiro 反序列化漏洞 | done | G00 |  | accepted | passed | 2026-03-30 |  | 高危 RCE |
 | G01 | G01-S01 | Jackson 反序列化 | 实现 `/deserialize/jackson` 端点 | done | G00 |  | accepted | passed | 2026-03-30 |  | enableDefaultTyping |
@@ -97,15 +101,18 @@
 | G03 | G03-S01 | SpEL 注入 | 实现 `/spel/vuln1` 和 `/spel/vuln2` | done | G00 | Spring 自带 | accepted | passed | 2026-03-31 |  | StandardEvaluationContext |
 | G03 | G03-S02 | QLExpress 注入 | 实现 `/qlexpress/vuln` 和 `/vuln2` 端点 | done | G00 | 需 QLExpress 依赖 | accepted | passed | 2026-03-31 |  | 阿里表达式引擎 |
 | G04 |  | 模板注入 | 添加 Velocity、FreeMarker SSTI | done | G00 |  | accepted | passed | 2026-03-31 |  | RCE |
-| G04 | G04-S01 | Velocity SSTI | 实现 `/ssti/velocity` 端点 | done | G00 | 需 Velocity 依赖 | accepted | passed | 2026-03-31 |  | Velocity.evaluate |
-| G04 | G04-S02 | FreeMarker SSTI | 实现 `/ssti/freemarker` 端点 | done | G00 | 需 FreeMarker 依赖 | accepted | passed | 2026-03-31 |  | 模板注入 |
-| G05 |  | Web 安全漏洞 | 添加 URL 重定向、文件上传等 Web 漏洞 | design | G00 |  | pending | not_started |  |  | 钓鱼/Shell |
-| G05 | G05-S01 | URL 重定向 | 实现 `/urlRedirect/*` 三种方式 | design | G00 |  | pending | not_started |  |  | redirect/setHeader/sendRedirect |
-| G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | design | G00 |  | pending | not_started |  |  | Webshell 上传 |
-| G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | design | G00 | 需 JWT 依赖 | pending | not_started |  |  | JWT 安全 |
-| G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | design | G00 |  | pending | not_started |  |  | 浏览器安全 |
-| G05 | G05-S05 | CRLF 注入 | 实现 `/crlf injection` 端点 | design | G00 |  | pending | not_started |  |  | HTTP 响应拆分 |
-| G06 |  | 验证测试完善 | 为所有新增漏洞添加验证脚本 | planned | G01,G02,G03,G04,G05 |  | pending | not_started |  |  | 测试覆盖率 |
+| G04 | G04-S01 | Velocity SSTI | 实现 `/ssti/velocity` 端点 | done | G00 | 需 Velocity 2.3 依赖 | accepted | passed | 2026-03-31 |  | Velocity.evaluate + POST |
+| G04 | G04-S02 | FreeMarker SSTI | 实现 `/ssti/freemarker` 端点 | done | G00 | 需 FreeMarker 依赖 | accepted | passed | 2026-03-31 |  | 模板注入 + POST |
+| G05 |  | Web 安全漏洞 | 添加 URL 重定向、文件上传等 Web 漏洞 | done | G00 | 需 JWT/FileUpload 依赖 | accepted | passed | 2026-03-31 | 5247a5c | 钓鱼/Shell |
+| G05 | G05-S01 | URL 重定向 | 实现 `/urlRedirect/*` 三种方式 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | redirect/setHeader/sendRedirect |
+| G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | done | G00 | 需 FileUpload 依赖 | accepted | passed | 2026-03-31 | 5247a5c | Webshell 上传 |
+| G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | done | G00 | 需 JWT 依赖 | accepted | passed | 2026-03-31 | 5247a5c | JWT 安全 |
+| G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | 浏览器安全 |
+| G05 | G05-S05 | CRLF 注入 | 实现 `/crlf/injection` 端点 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | HTTP 响应拆分 |
+| G06 |  | 验证测试完善 | 修复和增强验证测试套件 | done | G01,G02,G03,G04,G05 |  | accepted | passed | 2026-03-31 |  | 100% 通过率 |
+| G06 | G06-S01 | SSTI 端点修复 | 修复 Velocity/FreeMarker POST 端点，升级 Velocity 2.3 | done | G04 |  | accepted | passed | 2026-03-31 |  | 绕过 Spring 拦截 |
+| G06 | G06-S02 | 命令注入修复 | 修复 Ping 端点使用 sh -c | done | G03 |  | accepted | passed | 2026-03-31 |  | 真正的 RCE |
+| G06 | G06-S03 | 验证脚本增强 | 更新测试语法，添加 Docker 支持 | done |  | Docker 新增 | accepted | passed | 2026-03-31 |  | 完整验证工具 |
 
 ## 6. 开放风险与阻塞
 

@@ -98,10 +98,13 @@ public class CommandInjectionController {
     /**
      * 命令注入漏洞 - ping命令
      *
+     * 漏洞原理：通过 sh -c 执行命令，使特殊字符可以被 shell 解析
+     *
      * 测试用例：
      * - 正常: http://localhost:8080/cmd/ping/vuln?host=8.8.8.8
      * - 注入: http://localhost:8080/cmd/ping/vuln?host=8.8.8.8;ls%20-la
      * - 注入: http://localhost:8080/cmd/ping/vuln?host=8.8.8.8%26%26whoami
+     * - 注入: http://localhost:8080/cmd/ping/vuln?host=8.8.8.8%7Cwhoami
      *
      * @param host 主机地址
      * @return ping结果
@@ -111,11 +114,11 @@ public class CommandInjectionController {
         String result;
 
         try {
-            // 漏洞代码：ping命令拼接
-            String cmd = "ping -c 3 " + host;
-            logger.info("Command: {}", cmd);
+            // 漏洞代码：使用 sh -c 执行命令，允许 shell 解析特殊字符
+            String[] cmd = {"/bin/sh", "-c", "ping -c 3 " + host};
+            logger.info("Command: /bin/sh -c ping -c 3 {}", host);
 
-            result = CommandUtil.executeByRuntime(cmd);
+            result = CommandUtil.executeByProcessBuilder(cmd);
         } catch (Exception e) {
             logger.error("Command execution error", e);
             result = "Error: " + e.getMessage();

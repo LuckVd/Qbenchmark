@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库 (用于 SQL 注入测试)
+  mysql:
+    image: mysql:8.0
+    container_name: qb_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: vulndb
+      MYSQL_USER: vulnuser
+      MYSQL_PASSWORD: vulnpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./validation/scripts/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+    networks:
+      - qb_network
+
+  # JNDI 注入服务器 (用于 Log4Shell RCE 测试)
+  jndi-server:
+    image: ubuntu:22.04
+    container_name: qb_jndi
+    ports:
+      - "8888:8888"
+           - "1389:1389"
+    volumes:
+      - ./validation/scripts:/scripts
+    command: |
+      bash -c "
+      apt-get update && apt-get install -y openjdk-11-jdk python3
+      cd /scripts
+      # 启动简易 LDAP 服务器监听
+      python3 -m http.server 8888 &
+      sleep infinity
+      "
+    networks:
+      - qb_network
+
+  # 漏洞靶场应用
+  vulnlab:
+    build:
+      context: ./java-vuln-lab
+      dockerfile: Dockerfile
+    container_name: qb_vulnlab
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vulndb?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: vulnuser
+      SPRING_DATASOURCE_PASSWORD: vulnpass
+    depends_on:
+      - mysql
+    networks:
+      - qb_network
+
+networks:
+  qb_network:
+    driver: bridge
