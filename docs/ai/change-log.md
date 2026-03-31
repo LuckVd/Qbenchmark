@@ -20,8 +20,8 @@
   - XStream 端点: ✅ HashMap 反序列化成功
   - SnakeYaml 端点: ✅ LinkedHashMap 反序列化成功
   - XMLDecoder 端点: ✅ String 反序列化成功
-- Commit: pending
-- Deploy: pending
+- Commit: a09de39
+- Deploy: pushed to origin/master
 
 ## 2026-03-31 (本次会话 - G07 环境验证靶场)
 

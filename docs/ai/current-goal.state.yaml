@@ -12,7 +12,8 @@ dead_code_actions: []
 goal_candidates:
   - 所有计划目标 (G01-G08) 已完成
   - 可使用 /ai-roadmap 添加新目标 (G09-G10)
-sync_status: pending
+sync_status: synced
+last_synced_commit: a09de39
 last_check_at: '2026-03-31'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
