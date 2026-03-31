@@ -1,5 +1,25 @@
 # Change Log
 
+## 2026-03-31 (本次会话 - G07 环境验证靶场)
+
+- Goal ID: G07 (环境验证靶场)
+- Summary: 创建独立简化的 Java 靶场，用于扫描器环境检测
+- Impact: `env_validation/java-simple-vuln/`
+- Changes:
+  - **pom.xml**: Maven 项目配置，最小依赖
+  - **SimpleApplication.java**: Spring Boot 入口类
+  - **CmdInjectionController.java**: 命令注入漏洞控制器 (/ping, /info)
+  - **application.yml**: 应用配置（端口 8081）
+  - **Dockerfile**: 容器镜像定义
+  - **README.md**: 使用说明
+- Tests: 全部通过
+  - Maven 构建: ✅
+  - 应用启动: ✅
+  - /info 端点: ✅
+  - /ping 命令注入: ✅ `;whoami` 返回 root
+- Commit: pending
+- Deploy: pending
+
 ## 2026-03-31 (本次会话 - G06 验证测试完善)
 
 - Goal ID: G06 (验证测试完善)

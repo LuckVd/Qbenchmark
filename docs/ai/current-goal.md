@@ -4,7 +4,7 @@
 
 **无活跃目标**
 
-所有计划目标（G01-G06）已完成。可以使用 `/ai-roadmap` 添加新的目标。
+G07 环境验证靶场已完成。可以使用 `/ai-roadmap` 添加新的目标。
 
 ## Completed Goals
 
@@ -15,33 +15,48 @@
 | G03 | 表达式注入 | ✅ 完成 | 04ea225 |
 | G04 | 模板注入 | ✅ 完成 | 6a61481 |
 | G05 | Web 安全漏洞 | ✅ 完成 | 5247a5c |
-| G06 | 验证测试完善 | ✅ 完成 | - |
+| G06 | 验证测试完善 | ✅ 完成 | cf2d8af |
+| G07 | 环境验证靶场 | ✅ 完成 | pending |
 
 ## Current State
 
 项目已达到路线图规划的所有功能里程碑。
 
-## 本次会话完成工作（G06 验证测试完善）
+## G07 完成工作（环境验证靶场）
 
-### SSTI 端点修复
-- 升级 Velocity 到 2.3 版本
-- 添加 POST 端点绕过 Spring URL 拦截
-- FreeMarker 添加 POST 端点
+### 创建的项目
 
-### 命令注入修复
-- 修复 Ping 端点使用 sh -c 实现真正的命令注入
+```
+env_validation/java-simple-vuln/
+├── pom.xml                      # Maven 配置（最小依赖）
+├── Dockerfile                   # 容器镜像
+├── README.md                    # 使用说明
+└── src/main/
+    ├── java/com/envtest/
+    │   ├── SimpleApplication.java      # Spring Boot 入口
+    │   └── controller/
+    │       └── CmdInjectionController.java  # 命令注入端点
+    └── resources/
+        └── application.yml              # 配置（端口 8081）
+```
 
-### 验证脚本增强
-- 更新 SSTI 测试使用正确的 Velocity/FreeMarker 语法
-- 更新 Ping 测试检测命令注入
-- 新增 33 项验证测试，100% 通过
+### 漏洞端点
 
-### 新增验证工具
-- `validation/local_validate.sh` - 完整验证脚本
-- `validation/scripts/generate_payloads.py` - Payload 生成器
-- `validation/scripts/jndi_server.py` - Log4Shell RCE 测试服务器
-- `validation/HOWTO_VALIDATE.md` - 验证使用说明
+| 端点 | 说明 | 测试结果 |
+|------|------|----------|
+| `/ping?ip=xxx` | 命令注入 | ✅ `;whoami` 返回 root |
+| `/info` | 环境信息 | ✅ 返回版本标识 |
 
-### Docker 部署支持
-- `docker-compose.yml` - Docker 编排配置
-- `java-vuln-lab/Dockerfile` - 应用容器镜像
+### 验收结果
+
+- [x] Maven 构建成功 (`mvn clean package`)
+- [x] 应用可正常启动 (端口 8081)
+- [x] 命令注入端点可访问
+- [x] Dockerfile 代码正确（镜像构建因网络问题未验证）
+
+### 技术特点
+
+- 无外部依赖（不需要数据库）
+- 最小化项目结构
+- 完整的 Maven/Spring Boot 框架
+- 明确的版本标识供扫描器识别
