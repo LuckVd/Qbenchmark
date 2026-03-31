@@ -237,6 +237,24 @@ else
     echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
 fi
 
+# 24. Velocity SSTI
+echo -e "\n【24】Velocity SSTI"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/ssti/velocity/vuln?template=\${\"hello\"}")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - Velocity 模板注入"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
+# 25. FreeMarker SSTI
+echo -e "\n【25】FreeMarker SSTI"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET/ssti/freemarker/vuln?template=\${\"hello\"}")
+if [ "$HTTP_CODE" = "200" ]; then
+    echo -e "$PASS 端点可用 - FreeMarker 模板注入"
+else
+    echo -e "$FAIL 端点不存在 (HTTP $HTTP_CODE)"
+fi
+
 echo ""
 echo "========================================"
 echo "   验证完成"
@@ -251,5 +269,6 @@ echo "  - log4shell_payloads.txt"
 echo "  - path_traversal_payloads.txt"
 echo "  - deserialize_payloads.txt"
 echo "  - xxe_payloads.txt"
-echo "  - expression_payloads.txt (新增)"
+echo "  - expression_payloads.txt"
+echo "  - ssti_payloads.txt (新增)"
 echo ""

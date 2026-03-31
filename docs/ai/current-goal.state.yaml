@@ -1,39 +1,35 @@
-goal_id: G03
-title: 表达式注入（中危）- 添加 SpEL 和 QLExpress 表达式注入漏洞
-stage: implementation
-status: complete
-selected_option: full_spel_qlexpress
+goal_id: G04
+title: 模板注入（中危）- 添加 Velocity 和 FreeMarker SSTI 漏洞
+stage: design
+status: pending
+selected_option: full_velocity_freemarker
 design_confirmed: true
 blocked_by: []
 open_questions: []
 implementation_steps:
-  - 在 pom.xml 添加 QLExpress 依赖
-  - 创建 SpelController.java
-  - 创建 QLExpressController.java
-  - 实现 /spel/vuln1 端点（直接 SpEL 解析）
-  - 实现 /spel/vuln2 端点（包装后的 SpEL 解析）
-  - 实现 /qlexpress/vuln 端点
-  - 实现 /qlexpress/vuln2 端点
-  - 创建 validation/payloads/expression_payloads.txt
-  - 更新 validation/quick_validate.sh 添加表达式注入测试
+  - 在 pom.xml 添加 Velocity 和 FreeMarker 依赖
+  - 创建 VelocityController.java
+  - 创建 FreeMarkerController.java
+  - 实现 /ssti/velocity/vuln 端点
+  - 实现 /ssti/freemarker/vuln 端点
+  - 创建 validation/payloads/ssti_payloads.txt
+  - 更新 validation/quick_validate.sh 添加 SSTI 测试
   - 编译测试
 test_scope:
-  - SpEL RCE: T(java.lang.Runtime).getRuntime().exec('whoami')
-  - SpEL 文件检测: new java.io.File('/etc/passwd').exists()
-  - SpEL 信息泄露: T(java.lang.System).getProperty('user.name')
-  - SpEL 模板: #{T(java.lang.Runtime).getRuntime().exec('whoami')}
-  - QLExpress RCE: Runtime.getRuntime().exec("whoami")
-  - QLExpress 信息泄露: System.getProperty("user.name")
+  - Velocity SSTI: #set($x='')##$x.class.forName('java.lang.Runtime').getRuntime().exec('whoami')
+  - Velocity 信息泄露: $math
+  - FreeMarker SSTI: "test"?api
+  - FreeMarker API 访问: ${"test"?api}
 security_blockers: []
 dead_code_actions: []
 goal_candidates:
-  - G01: 反序列化漏洞（Jackson, Fastjson, Shiro, Cookie）- 已完成
-  - G02: XXE 漏洞（XMLReader, SAXBuilder, DocumentBuilder）- 已完成
-  - G03: 表达式注入（SpEL, QLExpress）- 已实现
-  - G04: 模板注入（Velocity, FreeMarker）
-  - G05: Web 安全漏洞（URL 重定向, 文件上传, JWT, CORS, CSRF, CRLF, Cookies）
-sync_status: not_started
+  - G01: 反序列化漏洞 - 已完成
+  - G02: XXE 漏洞 - 已完成
+  - G03: 表达式注入 - 已完成
+  - G04: 模板注入 - 当前目标
+  - G05: Web 安全漏洞 - 待实现
+sync_status: complete
 last_check_at: '2026-03-31'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
-last_synced_at: null
+last_synced_at: '2026-03-31'
