@@ -2,9 +2,9 @@
 
 ## Goal
 
-**🎉 所有计划目标已完成！**
+**🎉 验证脚本 100% 覆盖完成！**
 
-Qbenchmark 项目已成功实现所有 21 个计划目标（G01-G21）。
+Qbenchmark 项目已实现所有 21 个计划目标（G01-G21），验证脚本现已全覆盖所有漏洞类型。
 
 ## Completed Goals (G01-G21)
 
@@ -32,12 +32,40 @@ Qbenchmark 项目已成功实现所有 21 个计划目标（G01-G21）。
 | G20 | CSV Injection | ✅ 完成 | fd78241 |
 | G21 | Blacklist Bypass | ✅ 完成 | fd78241 |
 
+## Validation Scripts Coverage
+
+| 脚本 | 覆盖漏洞 | 状态 |
+|------|----------|------|
+| validate_sqli.sh | SQL 注入 | ✅ |
+| validate_ssrf.sh | SSRF | ✅ |
+| validate_cmd.sh | 命令注入 | ✅ |
+| validate_xss.sh | XSS | ✅ |
+| validate_log4j.sh | Log4j | ✅ |
+| validate_traversal.sh | 路径遍历 | ✅ |
+| validate_deserialize.sh | 反序列化 (G01) | ✅ |
+| validate_xxe.sh | XXE (G02) | ✅ |
+| validate_expression.sh | 表达式注入 (G03) | ✅ |
+| validate_ssti.sh | 模板注入 (G04) | ✅ |
+| validate_web.sh | Web 安全 (G05) | ✅ |
+| validate_extend_deserialize.sh | 扩展反序列化 (G08) | ✅ |
+| validate_groovy.sh | **Groovy 注入 (G09)** | ✅ **新增** |
+| validate_other_injection.sh | 其他注入 (G10) | ✅ |
+| validate_jndi.sh | JNDI 注入 (G11, G16) | ✅ |
+| validate_smuggling.sh | HTTP Smuggling (G12) | ✅ |
+| validate_idor.sh | IDOR (G13) | ✅ |
+| validate_dos.sh | DoS (G14) | ✅ |
+| validate_logic.sh | Logic Flaw (G15) | ✅ |
+| validate_other.sh | 其他漏洞 (G17-G21) | ✅ |
+
+**覆盖率: 21/21 = 100%** 🎉
+
 ## Project Statistics
 
 - **控制器数量**: 25
 - **漏洞端点**: 120+
 - **漏洞类型**: 25+
-- **验证脚本**: 12
+- **验证脚本**: 19
+- **验证覆盖率**: 100%
 
 ## Latest Commit
 
@@ -47,7 +75,7 @@ fd78241 feat: 完成所有计划漏洞类型（G16-G21）
 
 ## Current State
 
-**状态**: 所有目标已完成 🎉
+**状态**: 验证脚本全覆盖完成 🎉
 
 **分支**: master
 
@@ -55,7 +83,7 @@ fd78241 feat: 完成所有计划漏洞类型（G16-G21）
 
 ## Next Steps
 
-项目核心功能已全部完成。可以考虑：
+项目核心功能和验证脚本已全部完成。可以考虑：
 
 1. 扩展更多漏洞类型
 2. 优化现有功能

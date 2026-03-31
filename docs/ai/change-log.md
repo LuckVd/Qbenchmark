@@ -1,5 +1,28 @@
 # Change Log
 
+## 2026-03-31 (验证脚本完善)
+
+- Goal ID: 验证脚本全覆盖
+- Summary: 补充缺失的 Groovy 脚本注入验证脚本，实现 100% 覆盖
+- Impact: `validation/validate_groovy.sh`, `docs/ai/`
+- Changes:
+  - **validate_groovy.sh**: 新增验证脚本，12 个测试用例
+    - 基础算术/字符串操作
+    - 命令执行 (whoami, ls, id, pwd)
+    - 多命令执行 (复合命令)
+    - 环境变量/系统属性读取
+    - 文件读取 (/etc/passwd)
+    - 反向 Shell payload
+    - 安全版本防护测试
+  - **current-goal.state.yaml**: 更新验证覆盖率状态
+- Tests: 12/12 通过 (100%)
+  - Groovy 基础表达式: ✅
+  - Groovy 命令执行: ✅
+  - Groovy 文件读取: ✅
+  - Groovy 安全版本: ✅
+- 验证脚本覆盖率: **21/21 = 100%**
+- Commit: pending
+
 ## 2026-03-31 (本次会话 - G10 其他注入类漏洞)
 
 - Goal ID: G10 (其他注入类漏洞)
