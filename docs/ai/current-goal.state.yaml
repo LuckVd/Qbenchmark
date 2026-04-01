@@ -1,7 +1,7 @@
 goal_id: none
 title: 无活跃目标
 stage: complete
-status: validation_coverage_complete
+status: g22_completed
 design_confirmed: false
 blocked_by: []
 open_questions: []
@@ -10,10 +10,10 @@ test_scope: []
 security_blockers: []
 dead_code_actions: []
 goal_candidates:
-  - 验证脚本已全覆盖所有漏洞类型
-sync_status: synced
-last_synced_commit: pending
-last_check_at: '2026-03-31'
+  - G22 混淆靶场已完成，可开始新目标或扩展混淆功能
+sync_status: unsynced
+last_synced_commit: 3a24796
+last_check_at: '2026-04-01'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
 last_synced_at: '2026-03-31'
@@ -29,8 +29,10 @@ completed_goals:
   - G09: 脚本引擎注入 (3742f57)
   - G10: 其他注入类漏洞 (6420461)
   - G11-G21: 高中低危漏洞 (fd78241)
+  - G22: 混淆靶场建设 (pending)
 validation_scripts:
-  - validate_groovy.sh: Groovy 脚本引擎注入 (新增)
-  - validate_jndi.sh: JNDI RMI/LDAP 注入 (含 G16 RMI)
+  - validate_groovy.sh: Groovy 脚本引擎注入
+  - validate_jndi.sh: JNDI RMI/LDAP 注入
   - validate_other.sh: CSV, Password Reset, Login Bypass, Unauthorized Access, Blacklist Bypass
-total_coverage: "21/21 = 100%"
+  - validate_obf.sh: 混淆靶场验证 (新增)
+total_coverage: "22/22 = 100%"

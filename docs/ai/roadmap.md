@@ -17,9 +17,9 @@
 
 **当前阶段：** feature-development
 
-**当前目标：** 无活跃目标（所有计划目标已完成）
+**当前目标：** G22 混淆靶场建设 (已完成)
 
-**验证覆盖率：** 21/21 = 100% ✅
+**验证覆盖率：** 22/22 = 100% ✅
 
 **主文档说明：** 本文件负责记录总体设计、阶段目标和实现进度。
 
@@ -173,6 +173,13 @@
 | G21 |  | Blacklist Bypass（低危） | 添加黑名单绕过技巧 | done |  |  | accepted | passed | 2026-03-31 |  | 绕过技巧 |
 | G21 | G21-S01 | 文件扩展名绕过 | 实现 `/bypass/extension` 端点 | done | G21 |  |  | accepted | passed | 2026-03-31 |  | 多重后缀 |
 | G21 | G21-S02 | MIME 类型绕过 | 实现 `/bypass/mime` 端点 | done | G21 |  |  | accepted | passed | 2026-03-31 |  | Content-Type 伪造 |
+| G22 |  | 混淆靶场建设 | 创建独立混淆靶场，多层混淆技术 | done |  |  | accepted | passed | 2026-04-01 |  | 源码级混淆 |
+| G22 | G22-S01 | 项目骨架 | 创建 java-vuln-obf 目录结构、pom.xml、启动类 | done |  |  |  | passed | 2026-04-01 |  | 端口 8081 |
+| G22 | G22-S02 | 混淆工具类 | ReflectionUtil、StringObfuscator、EncodingUtil | done |  |  |  | passed | 2026-04-01 |  | 反射/编码工具 |
+| G22 | G22-S03 | 核心漏洞混淆 | SQLi、CMDi、反序列化、XXE、SpEL | done |  |  |  | passed | 2026-04-01 |  | 高危漏洞混淆 |
+| G22 | G22-S04 | 其余漏洞混淆 | 模板、Web、高中低危漏洞 | done |  |  |  | passed | 2026-04-01 |  | 30+ 漏洞端点 |
+| G22 | G22-S05 | ProGuard 集成 | ProGuard 配置 (源码级混淆已完成) | done |  |  |  | passed | 2026-04-01 |  | 混淆配置 |
+| G22 | G22-S06 | 测试验证 | validate_obf.sh 验证脚本 | done |  |  |  | passed | 2026-04-01 |  | 7/7 通过 |
 
 ## 6. 开放风险与阻塞
 

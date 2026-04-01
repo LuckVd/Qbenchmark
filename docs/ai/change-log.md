@@ -1,5 +1,34 @@
 # Change Log
 
+## 2026-04-01 (G22 混淆靶场建设)
+
+- Goal ID: G22 (混淆靶场建设)
+- Summary: 创建独立混淆靶场，使用多层混合混淆技术对 30+ 个漏洞端点进行混淆
+- Impact: `java-vuln-obf/`, `validation/validate_obf.sh`
+- Changes:
+  - **java-vuln-obf/**: 新建独立混淆靶场项目
+    - 端口 8081，与原靶场并行运行
+    - 三层架构：Facade (REST API) → Handler (间接调用) → Executor (漏洞代码)
+  - **混淆工具类**: ReflectionUtil, StringObfuscator, EncodingUtil, PathMapping
+  - **混淆技术**:
+    - 路径伪装：`/sqli/jdbc/vuln` → `/api/v1/query/user`
+    - 字符串分割：SQL 语句分段构建
+    - 反射调用：Runtime, ProcessBuilder 通过反射执行
+    - Base64 编码：配置参数编码
+    - 三层架构：Facade → Handler → Executor 隔离
+  - **混淆端点**: 30+ 个控制器，覆盖所有漏洞类型
+  - **validate_obf.sh**: 新增混淆靶场验证脚本
+- Tests: 7/7 通过 (100%)
+  - SQLi Path Obfuscation: ✅
+  - Command Exec Reflection: ✅
+  - SpEL Expression: ✅
+  - SpEL RCE: ✅ (T(java.lang.System).getProperty 返回 root)
+  - Jackson Parse: ✅
+  - XML Parse: ✅
+  - Lab Info: ✅
+- 验证脚本覆盖率: **22/22 = 100%** (含 G22)
+- Commit: pending
+
 ## 2026-03-31 (验证脚本完善)
 
 - Goal ID: 验证脚本全覆盖
