@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component;
 import java.sql.*;
 
 /**
- * SQL Operations - The actual vulnerable code layer
- * This is where the real SQL injection happens
+ * Query Operations
  */
 @Component
 public class SqlOperations {
@@ -28,7 +27,7 @@ public class SqlOperations {
     private String dbPassword;
 
     /**
-     * Execute a vulnerable SQL query with string concatenation
+     * Execute a query with string concatenation
      * Uses multiple obfuscation layers
      */
     public String executeVulnerableQuery(String table, String field, String value) {
@@ -63,7 +62,7 @@ public class SqlOperations {
     }
 
     /**
-     * Execute a LIKE query vulnerability
+     * Execute a LIKE query
      */
     public String executeLikeQuery(String table, String field, String value) {
         StringBuilder result = new StringBuilder();
@@ -93,7 +92,7 @@ public class SqlOperations {
     }
 
     /**
-     * Execute ORDER BY vulnerability
+     * Execute ORDER BY query
      */
     public String executeOrderQuery(String table, String sortField) {
         StringBuilder result = new StringBuilder();
@@ -132,7 +131,6 @@ public class SqlOperations {
     private Connection getConnection() throws ClassNotFoundException, SQLException {
         // Use H2 driver - no class loading needed for H2 in Spring Boot
         // The encoded name below is just for obfuscation demo
-        // "org.h2.Driver" encoded
         String driverClass = EncodingUtil.base64Decode("b3JnLmgyLkRyaXZlcg==");
 
         Class.forName(driverClass);

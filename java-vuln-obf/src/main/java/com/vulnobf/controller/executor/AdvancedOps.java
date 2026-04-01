@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Advanced Operations - High/Medium/Low risk vulnerabilities
+ * Advanced Operations
  */
 @Component
 public class AdvancedOps {
@@ -22,7 +22,7 @@ public class AdvancedOps {
     private static final Logger logger = LoggerFactory.getLogger(AdvancedOps.class);
 
     /**
-     * JNDI RMI injection vulnerability
+     * JNDI RMI lookup
      */
     public String jndiRmi(String url) {
         try {
@@ -39,7 +39,7 @@ public class AdvancedOps {
     }
 
     /**
-     * JNDI LDAP injection vulnerability
+     * JNDI LDAP lookup
      */
     public String jndiLdap(String url) {
         try {
@@ -147,7 +147,7 @@ public class AdvancedOps {
     }
 
     /**
-     * Captcha bypass vulnerability
+     * Verify captcha
      */
     public String verifyCaptcha(String captcha, String sessionId) {
         // Captcha is predictable and reusable
@@ -161,7 +161,7 @@ public class AdvancedOps {
     }
 
     /**
-     * Login bypass via SQL injection
+     * SQL login
      */
     public String sqlBypassLogin(String username, String password) {
         // Direct SQL construction
@@ -184,24 +184,24 @@ public class AdvancedOps {
     }
 
     /**
-     * Password reset vulnerability
+     * Password reset
      */
     public String resetPassword(String email, String host) {
-        // Use host header for email link - vulnerable to Host injection
+        // Use host header for email link
         String resetLink = "http://" + host + "/reset?token=abc123";
 
         return "Password reset link sent to " + email + ": " + resetLink;
     }
 
     /**
-     * CSV injection
+     * Export CSV
      */
     public String exportCsv(String[] data) {
         StringBuilder csv = new StringBuilder();
         csv.append("Name,Email,Phone\n");
 
         for (String item : data) {
-            // No sanitization - allows formula injection
+            // No sanitization
             csv.append(item).append("\n");
         }
 

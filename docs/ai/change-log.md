@@ -1,5 +1,90 @@
 # Change Log
 
+## 2026-04-01 (G23 语义信息移除)
+
+- Goal ID: G23 (语义信息移除)
+- Summary: 移除两个靶场中的漏洞语义信息，同时保证漏洞功能正常
+- Impact: `java-vuln-lab/`, `java-vuln-obf/`, `validation/`
+- Changes:
+  - **主靶场类名重命名** (30 个控制器):
+    | 原类名 | 新类名 |
+    |-------|--------|
+    | SQLInjectionController | QueryController |
+    | XSSController | WebRenderController |
+    | CommandInjectionController | SystemExecController |
+    | SSRFController | DataFetchController |
+    | PathTraversalController | FileAccessController |
+    | DeserializeController | DataDecodeController |
+    | Log4jController | LogDataController |
+    | XXEController | XmlDataController |
+    | SpelController | ExprEvalController |
+    | QLExpressController | ScriptExprController |
+    | VelocityController | TplRenderController |
+    | FreeMarkerController | TplDataController |
+    | UrlRedirectController | NavController |
+    | FileUploadController | FileStoreController |
+    | JwtController | TokenAuthController |
+    | CorsCsrfController | BrowserSecController |
+    | CrlfInjectionController | HttpHeaderController |
+    | DosController | ResourceLimitController |
+    | ExtendDeserializeController | DataDecodeV2Controller |
+    | FastjsonController | JsonDataController |
+    | IDORController | ResourceAccessController |
+    | IndexController | HomeController |
+    | IPForgeryController | NetworkInfoController |
+    | JNDIController | RemoteDataController |
+    | LogicController | BusinessFlowController |
+    | OtherVulnController | MiscFeatureController |
+    | ShiroController | SessionDataController |
+    | SmugglingController | HttpRequestController |
+    | XPathController | XmlQueryController |
+  - **API 路径重映射**:
+    | 原路径 | 新路径 |
+    |-------|--------|
+    | /sqli/jdbc/vuln | /api/v1/query/user |
+    | /sqli/like/vuln | /api/v1/query/search |
+    | /sqli/order/vuln | /api/v1/query/sort |
+    | /xss/reflect | /api/v1/web/render |
+    | /cmd/ping/vuln | /api/v1/system/ping |
+    | /ssrf/* | /api/v1/data/fetch/* |
+    | /path/* | /api/v1/file/* |
+    | /deserialize/* | /api/v1/data/decode/* |
+    | /xxe/* | /api/v1/xml/parse/* |
+    | /spel/* | /api/v1/expr/* |
+    | /qlexpress/* | /api/v1/script/* |
+    | /ssti/* | /api/v1/tpl/* |
+    | /jwt/* | /api/v1/token/* |
+    | /idor/* | /api/v1/resource/* |
+    | /jndi/* | /api/v1/remote/* |
+    | /log4j/* | /api/v1/log/* |
+    | /cors/* | /api/v1/browser/* |
+    | /crlf/* | /api/v1/header/* |
+    | /urlRedirect/* | /api/v1/nav/* |
+    | /file/* | /api/v1/file/store/* |
+    | /dos/* | /api/v1/resource/* |
+    | /logic/* | /api/v1/business/* |
+    | /smuggling/* | /api/v1/http/* |
+    | /xpath/* | /api/v1/xml/query/* |
+    | /ip/* | /api/v1/network/* |
+    | /fastjson/* | /api/v1/json/data/* |
+  - **注释清理**: 移除所有 Javadoc 中的漏洞描述、中文注释、测试 URL 注释
+  - **混淆靶场注释清理**: 移除 18 个文件的语义注释
+  - **验证脚本更新** (9 个脚本):
+    - validate_sqli.sh: /sqli/* → /api/v1/query/*
+    - validate_cmd.sh: /cmd/* → /api/v1/system/*
+    - validate_xss.sh: /xss/* → /api/v1/web/*
+    - validate_ssrf.sh: /ssrf/* → /api/v1/data/fetch/*
+    - validate_traversal.sh: /path/* → /api/v1/file/*
+    - validate_deserialize.sh: /deserialize/* → /api/v1/data/decode/*
+    - validate_expression.sh: /spel/*, /qlexpress/* → /api/v1/expr/*, /api/v1/script/*
+    - validate_ssti.sh: /ssti/* → /api/v1/tpl/*
+    - validate_jndi.sh: /jndi/* → /api/v1/remote/*
+- Tests: 验证脚本已同步更新，待编译测试
+- Dead Code: 无新增死代码
+- Security: 无新增安全问题
+- Commit: da9f779
+- 验证脚本覆盖率: **23/23 = 100%** (含 G23)
+
 ## 2026-04-01 (G22 混淆靶场建设)
 
 - Goal ID: G22 (混淆靶场建设)

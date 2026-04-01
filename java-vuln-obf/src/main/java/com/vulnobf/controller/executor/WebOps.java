@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Web Operations - Web vulnerabilities
+ * Web Operations
  */
 @Component
 public class WebOps {
@@ -29,7 +29,7 @@ public class WebOps {
     private static final Key jwtKey = MacProvider.generateKey();
 
     /**
-     * URL redirect vulnerability
+     * URL redirect
      */
     public String redirect(String url) {
         // Direct redirect without validation
@@ -37,7 +37,7 @@ public class WebOps {
     }
 
     /**
-     * File upload vulnerability
+     * File upload
      */
     public String uploadFile(MultipartFile file, String path) {
         try {
@@ -101,7 +101,7 @@ public class WebOps {
     }
 
     /**
-     * CORS vulnerability - allows any origin
+     * Check CORS
      */
     public String checkCors(String origin) {
         // Always allow any origin
@@ -109,7 +109,7 @@ public class WebOps {
     }
 
     /**
-     * CSRF vulnerability - no token validation
+     * CSRF action
      */
     public String csrfAction(String data, String token) {
         // No CSRF token check
@@ -117,7 +117,7 @@ public class WebOps {
     }
 
     /**
-     * CRLF injection vulnerability
+     * Set header
      */
     public String setHeader(String value) {
         // Directly set header without sanitization

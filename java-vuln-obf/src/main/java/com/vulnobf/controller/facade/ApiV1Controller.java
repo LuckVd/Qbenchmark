@@ -25,11 +25,10 @@ public class ApiV1Controller {
     private PathMapping pathMapping;
 
     /**
-     * User query endpoint - SQL Injection vulnerability
+     * User query endpoint
      * Path: /api/v1/query/user
-     * Original: /sqli/jdbc/vuln
      *
-     * @param name User input (vulnerable to SQL injection)
+     * @param name User input
      * @return Query results
      */
     @GetMapping("/query/user")
@@ -44,13 +43,12 @@ public class ApiV1Controller {
     }
 
     /**
-     * Search endpoint - SQL Injection via LIKE
+     * Search endpoint
      * Path: /api/v1/query/search
-     * Original: /sqli/like/vuln
      *
-     * @param q Search query (vulnerable)
+     * @param q Search query
      * @return Search results
-     */
+    */
     @GetMapping("/query/search")
     public String searchQuery(@RequestParam("q") String q) {
         logger.info("Search: {}", q);
@@ -59,11 +57,10 @@ public class ApiV1Controller {
     }
 
     /**
-     * Sort endpoint - SQL Injection via ORDER BY
+     * Sort endpoint
      * Path: /api/v1/query/sort
-     * Original: /sqli/order/vuln
      *
-     * @param by Sort field (vulnerable)
+     * @param by Sort field
      * @return Sorted results
      */
     @GetMapping("/query/sort")

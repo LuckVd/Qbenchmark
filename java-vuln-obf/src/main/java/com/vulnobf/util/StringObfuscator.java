@@ -37,7 +37,7 @@ public class StringObfuscator {
     }
 
     /**
-     * Build SQL SELECT statement from parts
+     * Build SELECT statement from parts
      */
     public static String selectSql(String tableName, String field, String value) {
         return reconstruct(
@@ -50,7 +50,7 @@ public class StringObfuscator {
     }
 
     /**
-     * Build SQL LIKE statement from parts
+     * Build LIKE statement from parts
      */
     public static String likeSql(String tableName, String field, String value) {
         return reconstruct(

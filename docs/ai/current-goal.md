@@ -1,100 +1,82 @@
 # Current Goal
 
-## 目标
+## 状态
 
-**🎉 G22 混淆靶场建设已完成！**
+**无活跃目标** ✅
 
-Qbenchmark 项目已创建独立的混淆靶场 `java-vuln-obf/`，使用多层混合混淆技术对 30+ 个漏洞端点进行混淆，保持漏洞功能完整性。
+G23 (语义信息移除) 已完成。
 
-## Completed Goals (G01-G22)
+## 上次完成目标
 
-| 目标 | 名称 | 状态 | 完成日期 |
-|------|------|------|----------|
-| G01 | 反序列化漏洞 | ✅ 完成 | 2026-03-30 |
-| G02 | XXE 漏洞 | ✅ 完成 | 2026-03-30 |
-| G03 | 表达式注入 | ✅ 完成 | 2026-03-31 |
-| G04 | 模板注入 | ✅ 完成 | 2026-03-31 |
-| G05 | Web 安全漏洞 | ✅ 完成 | 2026-03-31 |
-| G06 | 验证测试完善 | ✅ 完成 | 2026-03-31 |
-| G07 | 环境验证靶场 | ✅ 完成 | 2026-03-31 |
-| G08 | 扩展反序列化漏洞 | ✅ 完成 | 2026-03-31 |
-| G09 | 脚本引擎注入 | ✅ 完成 | 2026-03-31 |
-| G10 | 其他注入类漏洞 | ✅ 完成 | 2026-03-31 |
-| G11-G21 | 高中低危漏洞 | ✅ 完成 | 2026-03-31 |
-| **G22** | **混淆靶场建设** | ✅ 完成 | **2026-04-01** |
+**G23: 语义信息移除** ✅
 
-## Validation Scripts Coverage
+移除两个靶场中的漏洞语义信息，同时更新验证脚本确保漏洞功能正常。
 
-| 脚本 | 覆盖漏洞 | 状态 |
-|------|----------|------|
-| validate_sqli.sh | SQL 注入 | ✅ |
-| validate_ssrf.sh | SSRF | ✅ |
-| validate_cmd.sh | 命令注入 | ✅ |
-| validate_xss.sh | XSS | ✅ |
-| validate_log4j.sh | Log4j | ✅ |
-| validate_traversal.sh | 路径遍历 | ✅ |
-| validate_deserialize.sh | 反序列化 (G01) | ✅ |
-| validate_xxe.sh | XXE (G02) | ✅ |
-| validate_expression.sh | 表达式注入 (G03) | ✅ |
-| validate_ssti.sh | 模板注入 (G04) | ✅ |
-| validate_web.sh | Web 安全 (G05) | ✅ |
-| validate_extend_deserialize.sh | 扩展反序列化 (G08) | ✅ |
-| validate_groovy.sh | Groovy 注入 (G09) | ✅ |
-| validate_other_injection.sh | 其他注入 (G10) | ✅ |
-| validate_jndi.sh | JNDI 注入 (G11, G16) | ✅ |
-| validate_smuggling.sh | HTTP Smuggling (G12) | ✅ |
-| validate_idor.sh | IDOR (G13) | ✅ |
-| validate_dos.sh | DoS (G14) | ✅ |
-| validate_logic.sh | Logic Flaw (G15) | ✅ |
-| validate_other.sh | 其他漏洞 (G17-G21) | ✅ |
-| **validate_obf.sh** | **混淆靶场 (G22)** | ✅ **新增** |
+## Completed Work
 
-**覆盖率: 22/22 = 100%** 🎉
+### 主靶场 (`java-vuln-lab/`) 变更
 
-## Project Statistics
+**重命名的控制器** (30 个):
+| 原类名 | 新类名 |
+|-------|--------|
+| `SQLInjectionController` | `QueryController` |
+| `XSSController` | `WebRenderController` |
+| `CommandInjectionController` | `SystemExecController` |
+| `SSRFController` | `DataFetchController` |
+| `PathTraversalController` | `FileAccessController` |
+| `DeserializeController` | `DataDecodeController` |
+| `Log4jController` | `LogDataController` |
+| `XXEController` | `XmlDataController` |
+| `SpelController` | `ExprEvalController` |
+| `QLExpressController` | `ScriptExprController` |
+| `VelocityController` | `TplRenderController` |
+| `FreeMarkerController` | `TplDataController` |
+| `UrlRedirectController` | `NavController` |
+| `FileUploadController` | `FileStoreController` |
+| `JwtController` | `TokenAuthController` |
+| `CorsCsrfController` | `BrowserSecController` |
+| `CrlfInjectionController` | `HttpHeaderController` |
+| `DosController` | `ResourceLimitController` |
+| `ExtendDeserializeController` | `DataDecodeV2Controller` |
+| `FastjsonController` | `JsonDataController` |
+| `IDORController` | `ResourceAccessController` |
+| `IndexController` | `HomeController` |
+| `IPForgeryController` | `NetworkInfoController` |
+| `JNDIController` | `RemoteDataController` |
+| `LogicController` | `BusinessFlowController` |
+| `OtherVulnController` | `MiscFeatureController` |
+| `ShiroController` | `SessionDataController` |
+| `SmugglingController` | `HttpRequestController` |
+| `XPathController` | `XmlQueryController` |
 
-- **控制器数量**: 30 (原靶场) + 10+ (混淆靶场)
-- **漏洞端点**: 120+ (原靶场) + 30+ (混淆靶场)
-- **漏洞类型**: 25+
-- **验证脚本**: 20
-- **验证覆盖率**: 100%
+**路径重映射** (主要路径):
+| 原路径 | 新路径 |
+|-------|--------|
+| `/sqli/jdbc/vuln` | `/api/v1/query/user` |
+| `/sqli/like/vuln` | `/api/v1/query/search` |
+| `/xss/reflect` | `/api/v1/web/render` |
+| `/cmd/ping/vuln` | `/api/v1/system/ping` |
+| `/ssrf/*` | `/api/v1/data/fetch/*` |
+| `/deserialize/*` | `/api/v1/data/decode/*` |
+| `/spel/*` | `/api/v1/expr/*` |
+| `/qlexpress/*` | `/api/v1/script/*` |
 
-## Latest Work: G22 混淆靶场
+**注释处理**:
+- 移除所有 Javadoc 中的漏洞描述
+- 移除方法内解释漏洞的中文注释
+- 移除测试 URL 注释
 
-### 混淆技术实现
+### 混淆靶场 (`java-vuln-obf/`) 变更
 
-| 技术 | 说明 |
-|------|------|
-| 路径伪装 | `/sqli/jdbc/vuln` → `/api/v1/query/user` |
-| 字符串分割 | SQL 语句分段拼接构建 |
-| 反射调用 | 通过反射执行危险 API |
-| Base64 编码 | 配置参数编码存储 |
-| 三层架构 | Facade → Handler → Executor 隔离 |
+**注释清理** (18 个文件):
+- 移除所有包含 "SQL", "injection", "vulnerability", "exploit" 的注释
+- 移除路径映射注释
+- 简化类注释，移除漏洞描述
 
-### 混淆靶场结构
+### 验证脚本更新
 
-```
-java-vuln-obf/                    # 端口 8081
-├── controller/facade/            # REST API 入口 (路径伪装)
-├── controller/handler/           # 间接调用层
-├── controller/executor/          # 实际漏洞代码
-├── util/                         # 混淆工具
-└── mapping/                      # 路径映射
-```
-
-## Current State
-
-**状态**: G22 已完成 🎉
-
-**分支**: master
-
-**远程状态**: 待同步
+所有主要验证脚本已更新路径映射。
 
 ## Next Steps
 
-所有计划目标已完成，可以考虑：
-
-1. 使用 ProGuard 进行编译时混淆
-2. 扩展更多混淆技术
-3. 完善文档
-4. 添加更多测试用例
+使用 `/ai-roadmap` 查看所有可用目标，或 `/ai-goal` 启动新目标。

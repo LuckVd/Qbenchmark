@@ -10,7 +10,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
- * Expression Operations - Expression injection vulnerabilities
+ * Expression Operations
  */
 @Component
 public class ExpressionOps {
@@ -19,7 +19,6 @@ public class ExpressionOps {
 
     /**
      * Evaluate SpEL expression with StandardEvaluationContext
-     * This is vulnerable - allows access to any class
      */
     public String evaluateSpel(String expr) {
         try {

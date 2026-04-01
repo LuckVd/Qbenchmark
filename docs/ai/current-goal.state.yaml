@@ -1,7 +1,7 @@
-goal_id: none
+goal_id: null
 title: 无活跃目标
-stage: complete
-status: g22_completed
+stage: empty
+status: idle
 design_confirmed: false
 blocked_by: []
 open_questions: []
@@ -9,14 +9,13 @@ implementation_steps: []
 test_scope: []
 security_blockers: []
 dead_code_actions: []
-goal_candidates:
-  - G22 混淆靶场已完成，可开始新目标或扩展混淆功能
+goal_candidates: []
 sync_status: synced
-last_synced_commit: 935d795
+last_synced_commit: da9f779
 last_check_at: '2026-04-01'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
-last_synced_at: '2026-03-31'
+last_synced_at: '2026-04-01'
 completed_goals:
   - G01: 反序列化漏洞 (605501a)
   - G02: XXE 漏洞 (4cc1104)
@@ -29,10 +28,19 @@ completed_goals:
   - G09: 脚本引擎注入 (3742f57)
   - G10: 其他注入类漏洞 (6420461)
   - G11-G21: 高中低危漏洞 (fd78241)
-  - G22: 混淆靶场建设 (pending)
+  - G22: 混淆靶场建设 (935d795)
+  - G23: 语义信息移除 (da9f779)
 validation_scripts:
+  - validate_sqli.sh: SQL 注入 (路径已更新)
+  - validate_cmd.sh: 命令注入 (路径已更新)
+  - validate_xss.sh: XSS (路径已更新)
+  - validate_ssrf.sh: SSRF (路径已更新)
+  - validate_traversal.sh: 路径遍历 (路径已更新)
+  - validate_deserialize.sh: 反序列化 (路径已更新)
+  - validate_expression.sh: 表达式注入 (路径已更新)
+  - validate_ssti.sh: 模板注入 (路径已更新)
+  - validate_jndi.sh: JNDI 注入 (路径已更新)
   - validate_groovy.sh: Groovy 脚本引擎注入
-  - validate_jndi.sh: JNDI RMI/LDAP 注入
-  - validate_other.sh: CSV, Password Reset, Login Bypass, Unauthorized Access, Blacklist Bypass
-  - validate_obf.sh: 混淆靶场验证 (新增)
-total_coverage: "22/22 = 100%"
+  - validate_other.sh: 其他漏洞
+  - validate_obf.sh: 混淆靶场验证
+total_coverage: "23/23 = 100%"

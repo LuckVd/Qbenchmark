@@ -1,5 +1,5 @@
 #!/bin/bash
-# 反序列化漏洞验证脚本
+# Data decode validation script
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -13,7 +13,7 @@ PASSED=0
 FAILED=0
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}反序列化漏洞验证脚本${NC}"
+echo -e "${BLUE}Data Decode Validation Script${NC}"
 echo -e "${BLUE}========================================${NC}"
 echo ""
 
@@ -21,53 +21,39 @@ test_case() {
     local name="$1"
     local url="$2"
     TOTAL=$((TOTAL + 1))
-    echo -e "\n${YELLOW}[测试 $TOTAL]${NC} $name"
+    echo -e "\n${YELLOW}[Test $TOTAL]${NC} $name"
     echo "URL: $url"
 
     response=$(curl -s "$url" -X POST 2>/dev/null)
     if [ $? -eq 0 ]; then
-        echo -e "  ${GREEN}[✓] 端点响应${NC}"
-        echo "  响应: $(echo "$response" | head -c 100)..."
+        echo -e "  ${GREEN}[✓] Endpoint responded${NC}"
+        echo "  Response: $(echo "$response" | head -c 100)..."
         PASSED=$((PASSED + 1))
     else
-        echo -e "  ${RED}[✗] 请求失败${NC}"
+        echo -e "  ${RED}[✗] Request failed${NC}"
         FAILED=$((FAILED + 1))
     fi
 }
 
-echo -e "${BLUE}=== 反序列化测试 ===${NC}"
+echo -e "${BLUE}=== Deserialization Tests ===${NC}"
 
-test_case "Jackson 反序列化" \
-    "${BASE_URL}/deserialize/jackson" \
-    ""
+test_case "Cookie decode" \
+    "${BASE_URL}/api/v1/data/decode/session"
 
-test_case "Fastjson 反序列化" \
-    "${BASE_URL}/fastjson/deserialize" \
-    ""
+test_case "JSON decode" \
+    "${BASE_URL}/api/v1/data/decode/json" \
+    "-H \"Content-Type: application/json\""
 
-test_case "Shiro RememberMe" \
-    "${BASE_URL}/shiro/deserialize" \
-    ""
+test_case "XML decode" \
+    "${BASE_URL}/api/v1/data/decode/v2/xml" \
+    "-H \"Content-Type: application/xml\""
 
-test_case "XStream 反序列化" \
-    "${BASE_URL}/deserialize/xstream" \
-    ""
+test_case "YML decode" \
+    "${BASE_URL}/api/v1/data/decode/v2/yml" \
+    "-H \"Content-Type: application/x-yaml\""
 
-test_case "SnakeYaml 反序列化" \
-    "${BASE_URL}/deserialize/yaml" \
-    ""
-
-test_case "XMLDecoder 反序列化" \
-    "${BASE_URL}/deserialize/xmldecoder" \
-    ""
-
-# 信息端点
-echo -e "\n${YELLOW}[*] 反序列化信息端点:${NC}"
-info=$(curl -s "${BASE_URL}/deserialize/info" 2>/dev/null)
-echo "$info" | head -10
-
-# 总结
+# Summary
 echo -e "\n${BLUE}========================================${NC}"
-echo -e "总测试数: ${YELLOW}$TOTAL${NC}"
-echo -e "通过: ${GREEN}$PASSED${NC}"
-echo -e "失败: ${RED}$FAILED${NC}"
+echo "Total tests: ${YELLOW}$TOTAL${NC}"
+echo "Passed: ${GREEN}$PASSED${NC}"
+echo "Failed: ${RED}$FAILED${NC}"

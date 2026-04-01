@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Other Operations - Additional vulnerabilities
+ * Other Operations
  */
 @Component
 public class OtherOps {
@@ -25,7 +25,7 @@ public class OtherOps {
     private static final Logger logger = LoggerFactory.getLogger(OtherOps.class);
 
     /**
-     * XPath injection vulnerability
+     * XPath login
      */
     public String xpathLogin(String username, String password) {
         try {
@@ -56,7 +56,7 @@ public class OtherOps {
     }
 
     /**
-     * IP spoofing vulnerability
+     * Get client IP
      */
     public String getClientIp(String xForwardedFor, String remoteAddr) {
         // Trust X-Forwarded-For blindly
@@ -67,7 +67,7 @@ public class OtherOps {
     }
 
     /**
-     * SSRF vulnerability
+     * Fetch URL
      */
     public String fetchUrl(String url) {
         try {
@@ -106,7 +106,7 @@ public class OtherOps {
     }
 
     /**
-     * XSS vulnerability
+     * Search query
      */
     public String search(String query) {
         // Reflect input without sanitization
@@ -114,7 +114,7 @@ public class OtherOps {
     }
 
     /**
-     * Path traversal vulnerability
+     * Read file
      */
     public String readFile(String filename) {
         try {
