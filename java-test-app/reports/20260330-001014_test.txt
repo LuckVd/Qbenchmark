@@ -1,0 +1,136 @@
+============================================================
+DeepVuln Security Report
+============================================================
+
+Source: /opt/projects/benchmark/Qbenchmark/java-vuln-lab
+Scanned: 2026-03-30 00:10:16.527156
+Duration: 3.33s
+
+------------------------------------------------------------
+Summary
+------------------------------------------------------------
+Dependencies scanned: 10
+Frameworks detected: 4
+Total vulnerabilities: 6
+  Critical: 2
+  High: 2
+  Medium: 2
+  Low: 0
+Known exploited (KEV): 0
+
+------------------------------------------------------------
+Attack Surface
+------------------------------------------------------------
+Total entry points: 39
+  HTTP endpoints: 39
+  RPC services: 0
+  gRPC services: 0
+  MQ consumers: 0
+  Cron jobs: 0
+
+Entry Points:
+  - [HTTP] /xss/xss (unknown)
+  - [HTTP] /xss/reflect (reflectXss)
+  - [HTTP] /xss/reflect/post (reflectXssPost)
+  - [HTTP] /xss/stored/store (storeXss)
+  - [HTTP] /xss/stored/show (showXss)
+  - [HTTP] /xss/search (searchXss)
+  - [HTTP] /xss/reflect/sec (reflectXssSecure)
+  - [HTTP] /path/path (unknown)
+  - [HTTP] /path/traversal/vuln (pathTraversalVuln)
+  - [HTTP] /path/image/vuln (imageVuln)
+  - [HTTP] /path/log/vuln (logVuln)
+  - [HTTP] /path/absolute/vuln (absolutePathVuln)
+  - [HTTP] /path/encode/vuln (encodeVuln)
+  - [HTTP] /path/traversal/sec (pathTraversalSecure)
+  - [HTTP] /log4j/log4j (unknown)
+  - [HTTP] /log4j/vuln (log4jVuln)
+  - [HTTP] /log4j/login (login)
+  - [HTTP] /log4j/header (logHeader)
+  - [HTTP] /log4j/search (search)
+  - [HTTP] /log4j/bypass (bypassWaf)
+  - [HTTP] /log4j/info (info)
+  - [HTTP] /ssrf/ssrf (unknown)
+  - [HTTP] /ssrf/urlconnection/vuln (urlConnectionVuln)
+  - [HTTP] /ssrf/httpurl/vuln (httpUrlVuln)
+  - [HTTP] /ssrf/httpclient/vuln (httpClientVuln)
+  - [HTTP] /ssrf/download/vuln (downloadVuln)
+  - [HTTP] /ssrf/urlconnection/sec (urlConnectionSecure)
+  - [HTTP] /sqli/sqli (unknown)
+  - [HTTP] /sqli/jdbc/vuln (jdbcVuln)
+  - [HTTP] /sqli/jdbc/sec (jdbcSecure)
+  - [HTTP] /sqli/like/vuln (likeVuln)
+  - [HTTP] /sqli/order/vuln (orderVuln)
+  - [HTTP] /cmd/cmd (unknown)
+  - [HTTP] /cmd/runtime/vuln (runtimeVuln)
+  - [HTTP] /cmd/processbuilder/vuln (processBuilderVuln)
+  - [HTTP] /cmd/ping/vuln (pingVuln)
+  - [HTTP] /cmd/header/vuln (headerVuln)
+  - [HTTP] /cmd/ping/sec (pingSecure)
+  - [HTTP] / (index)
+
+------------------------------------------------------------
+Technology Stack
+------------------------------------------------------------
+Languages: java
+Frameworks:
+  - spring (web)
+  - spring-boot (web)
+  - struts (web)
+  - hibernate (orm)
+Databases: mysql
+
+------------------------------------------------------------
+Vulnerabilities
+------------------------------------------------------------
+
+mysql:mysql-connector-java@8.0.33 (high)
+  - CVE-2023-22102: MySQL Connectors takeover vulnerability...
+
+org.apache.logging.log4j:log4j-core@2.14.1 (critical)
+  - CVE-2021-45046: Incomplete fix for Apache Log4j vulnerability...
+  - CVE-2021-44832: Improper Input Validation and Injection in Apache Log4j2...
+  - CVE-2021-44228: Remote code injection in Log4j...
+  - CVE-2021-45105: Apache Log4j2 vulnerable to Improper Input Validation and Uncontrolled Recursion...
+  - CVE-2025-68161: Apache Log4j does not verify the TLS hostname in its Socket Appender...
+
+------------------------------------------------------------
+Unresolved Dependencies (6)
+------------------------------------------------------------
+NOTE: CVE lookup was skipped for these to prevent false positives.
+Please review manually if these dependencies are security-critical.
+
+  - org.springframework.boot:spring-boot-starter-web
+    Raw version: (none)
+    Source: unknown, Confidence: 0%
+    Reason: no version specified
+
+  - org.springframework.boot:spring-boot-starter-thymeleaf
+    Raw version: (none)
+    Source: unknown, Confidence: 0%
+    Reason: no version specified
+
+  - com.h2database:h2
+    Raw version: (none)
+    Source: unknown, Confidence: 0%
+    Reason: no version specified
+
+  - org.apache.commons:commons-lang3
+    Raw version: (none)
+    Source: unknown, Confidence: 0%
+    Reason: no version specified
+
+  - org.projectlombok:lombok
+    Raw version: (none)
+    Source: unknown, Confidence: 0%
+    Reason: no version specified
+
+  - org.springframework.boot:spring-boot-starter-test
+    Raw version: (none)
+    Source: unknown, Confidence: 0%
+    Reason: no version specified
+
+
+============================================================
+End of Report
+============================================================

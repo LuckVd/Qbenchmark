@@ -4,7 +4,7 @@
 
 - Goal ID: G23 (语义信息移除)
 - Summary: 移除两个靶场中的漏洞语义信息，同时保证漏洞功能正常
-- Impact: `java-vuln-lab/`, `java-vuln-obf/`, `validation/`
+- Impact: `java-test-app/`, `java-test-app-obf/`, `validation/`
 - Changes:
   - **主靶场类名重命名** (30 个控制器):
     | 原类名 | 新类名 |
@@ -97,9 +97,9 @@
 
 - Goal ID: G22 (混淆靶场建设)
 - Summary: 创建独立混淆靶场，使用多层混合混淆技术对 30+ 个漏洞端点进行混淆
-- Impact: `java-vuln-obf/`, `validation/validate_obf.sh`
+- Impact: `java-test-app-obf/`, `validation/validate_obf.sh`
 - Changes:
-  - **java-vuln-obf/**: 新建独立混淆靶场项目
+  - **java-test-app-obf/**: 新建独立混淆靶场项目
     - 端口 8081，与原靶场并行运行
     - 三层架构：Facade (REST API) → Handler (间接调用) → Executor (漏洞代码)
   - **混淆工具类**: ReflectionUtil, StringObfuscator, EncodingUtil, PathMapping
@@ -149,7 +149,7 @@
 
 - Goal ID: G10 (其他注入类漏洞)
 - Summary: 添加 XPath 注入、IP 伪造两种漏洞
-- Impact: `java-vuln-lab/src/main/java/com/vulnlab/controller/`
+- Impact: `java-test-app/src/main/java/com/vulnlab/controller/`
 - Changes:
   - **XPathController.java**: 新增控制器，3 个端点
     - `/xpath/login` - XPath 注入漏洞（绕过认证）
@@ -172,7 +172,7 @@
 
 - Goal ID: G09 (脚本引擎注入)
 - Summary: 添加 Groovy 脚本引擎注入漏洞
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/CommandInjectionController.java`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/CommandInjectionController.java`
 - Changes:
   - **pom.xml**: 添加 Groovy 2.5.6 依赖
   - **CommandInjectionController.java**: 扩展控制器，添加 2 个端点
@@ -191,7 +191,7 @@
 
 - Goal ID: G08 (扩展反序列化漏洞)
 - Summary: 添加 XStream、SnakeYaml、XMLDecoder 三种反序列化漏洞
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/`
 - Changes:
   - **pom.xml**: 添加 XStream 1.4.10 和 SnakeYaml 1.27 依赖
   - **ExtendDeserializeController.java**: 新增控制器，6 个端点
@@ -234,7 +234,7 @@
 
 - Goal ID: G06 (验证测试完善)
 - Summary: 修复 SSTI 端点、命令注入 Ping 端点，增强验证脚本，添加 Docker 支持
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/`, `validation/`
 - Changes:
   - **VelocityController.java**: 重写，升级 Velocity 到 2.3，添加 POST 端点绕过 Spring 拦截
   - **FreeMarkerController.java**: 添加 POST 端点，支持复杂模板语法
@@ -246,7 +246,7 @@
   - **validation/scripts/jndi_server.py**: 新增 JNDI 服务器用于 Log4Shell RCE 测试
   - **validation/HOWTO_VALIDATE.md**: 新增验证使用说明
   - **docker-compose.yml**: 新增 Docker 编排配置
-  - **java-vuln-lab/Dockerfile**: 新增应用容器镜像
+  - **java-test-app/Dockerfile**: 新增应用容器镜像
 - Tests: 33/33 测试通过 (100%)
   - Velocity POST: ✅ #set($x=100)$x
   - FreeMarker POST: ✅ ${"hello"?upper_case}
@@ -267,7 +267,7 @@
 
 - Goal ID: G05 (实现完成)
 - Summary: 实现 Web 安全漏洞（URL 重定向、文件上传、JWT、CORS/CSRF/Cookies、CRLF 注入）
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/`, `validation/`
 - Changes:
   - 添加依赖：JWT 0.9.1, Commons FileUpload
   - 创建 UrlRedirectController.java：4 个 URL 重定向端点
@@ -282,7 +282,7 @@
 
 - Goal ID: G04 (实现完成)
 - Summary: 实现模板注入漏洞（Velocity、FreeMarker）
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/`, `validation/`
 - Changes:
   - 添加依赖：Velocity 1.7, FreeMarker 2.3.31
   - 创建 VelocityController.java：2 个 Velocity SSTI 端点
@@ -294,7 +294,7 @@
 
 - Goal ID: G03 (实现完成)
 - Summary: 实现表达式注入漏洞（SpEL、QLExpress）
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/`, `validation/`
 - Changes:
   - 添加依赖：QLExpress 3.3.4
   - 创建 SpelController.java：2 个 SpEL 注入端点
@@ -334,7 +334,7 @@
 
 - Goal ID: G02 (实现完成)
 - Summary: 实现 XXE 漏洞（XMLReader、SAXBuilder、DocumentBuilder）
-- Impact: `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Impact: `java-test-app/src/main/java/com/vulnlab/controller/`, `validation/`
 - Changes:
   - 创建 XXEController.java：3 种 XXE 漏洞端点
   - 创建 validation/payloads/xxe_payloads.txt
@@ -351,7 +351,7 @@
 
 - Goal ID: G01 (实现完成)
 - Summary: 实现反序列化漏洞（Jackson、Fastjson、Shiro、Cookie）
-- Impact: `java-vuln-lab/pom.xml`, `java-vuln-lab/src/main/java/com/vulnlab/controller/`, `validation/`
+- Impact: `java-test-app/pom.xml`, `java-test-app/src/main/java/com/vulnlab/controller/`, `validation/`
 - Changes:
   - 添加依赖：fastjson 1.2.24、shiro-core 1.2.4、commons-collections 3.1、dom4j 2.0.0
   - 创建 DeserializeController.java：Jackson enableDefaultTyping 反序列化、Cookie 反序列化

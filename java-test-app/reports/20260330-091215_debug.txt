@@ -1,0 +1,78 @@
+======================================================================
+DeepVuln Full Security Scan Report (Degraded - Core Engine Failed)
+======================================================================
+Status: DEGRADED SUCCESS
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+COVERAGE WARNING: Core evidence engine (CodeQL) failed.
+Results are based on reduced evidence. Manual verification recommended.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Source: /opt/projects/benchmark/Qbenchmark/java-vuln-lab
+Start Time: 2026-03-30T01:12:16.830662+00:00
+End Time: 2026-03-30T02:34:45.035807+00:00
+Primary Language: java
+
+----------------------------------------------------------------------
+Failed Engines
+----------------------------------------------------------------------
+  • semgrep: engine_failed
+    Message: Failed to parse Semgrep output: [00.11][ERROR]: -e/--pattern and -l/--lang must both be specified
+
+  • codeql [CORE]: engine_failed
+    Message: All CodeQL suites failed. First failure: java-security-extended
+
+----------------------------------------------------------------------
+CodeQL Readiness Gate
+----------------------------------------------------------------------
+  Status: enabled
+  Reason: enabled
+  Message: CodeQL ready for 0 language(s)
+
+----------------------------------------------------------------------
+Attack Surface
+----------------------------------------------------------------------
+  HTTP Endpoints: 72
+  RPC Services: 0
+  Total Entry Points: 72
+
+----------------------------------------------------------------------
+Scan Phases
+----------------------------------------------------------------------
+  semgrep: FAILED - Failed to parse Semgrep output: [00.11][ERROR]: -e/--pattern and -l/--lang must both be specified
+
+  codeql: FAILED - All CodeQL suites failed. First failure: java-security-extended
+  agent: 62 findings
+
+----------------------------------------------------------------------
+Statistics
+----------------------------------------------------------------------
+  Total Findings: 35
+  Verified: 35
+  Exploitable Findings: 9
+  Needs Review: 11
+  Informational: 15
+  Token Usage:
+    - Prompt Tokens: 529991
+    - Completion Tokens: 316498
+    - Total Tokens: 846489
+  By Exploitability:
+    - exploitable: 13
+    - conditional: 5
+    - not_exploitable: 15
+    - needs_review: 1
+    - unlikely: 1
+  By Adversarial Verdict:
+    - CONFIRMED: 13
+    - FALSE_POSITIVE: 2
+    - CONDITIONAL: 3
+    - NEEDS_REVIEW: 1
+  By Report Status:
+    - exploitable: 9
+    - conditional: 11
+    - informational: 15
+
+
+======================================================================
+End of Report
+======================================================================

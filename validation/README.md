@@ -34,7 +34,7 @@ validation/
 ### 1. 启动靶场
 
 ```bash
-cd /opt/projects/benchmark/Qbenchmark/java-vuln-lab
+cd /opt/projects/benchmark/Qbenchmark/java-test-app
 mvn spring-boot:run
 ```
 

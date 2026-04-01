@@ -14,7 +14,7 @@ G23 (语义信息移除) 已完成。
 
 ## Completed Work
 
-### 主靶场 (`java-vuln-lab/`) 变更
+### 主靶场 (`java-test-app/`) 变更
 
 **重命名的控制器** (30 个):
 | 原类名 | 新类名 |
@@ -66,7 +66,7 @@ G23 (语义信息移除) 已完成。
 - 移除方法内解释漏洞的中文注释
 - 移除测试 URL 注释
 
-### 混淆靶场 (`java-vuln-obf/`) 变更
+### 混淆靶场 (`java-test-app-obf/`) 变更
 
 **注释清理** (18 个文件):
 - 移除所有包含 "SQL", "injection", "vulnerability", "exploit" 的注释

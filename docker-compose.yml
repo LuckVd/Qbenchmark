@@ -41,7 +41,7 @@ services:
   # 漏洞靶场应用
   vulnlab:
     build:
-      context: ./java-vuln-lab
+      context: ./java-test-app
       dockerfile: Dockerfile
     container_name: qb_vulnlab
     ports:

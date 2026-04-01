@@ -1,0 +1,83 @@
+======================================================================
+DeepVuln Full Security Scan Report (Failed)
+======================================================================
+Status: FAILED
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+SCAN FAILED: No valid results were produced.
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Source: /opt/projects/benchmark/Qbenchmark/java-vuln-lab
+Start Time: 2026-03-29T14:55:25.179560+00:00
+End Time: 2026-03-29T15:47:16.659407+00:00
+Primary Language: java
+
+----------------------------------------------------------------------
+Failed Engines
+----------------------------------------------------------------------
+  • semgrep: engine_failed
+    Message: Failed to parse Semgrep output: [00.11][ERROR]: -e/--pattern and -l/--lang must both be specified
+
+  • codeql [CORE]: engine_failed
+    Message: All CodeQL suites failed. First failure: java-security-extended
+  • agent: engine_failed
+    Message: Agent failed: failure rate 54.5% >= threshold 50%
+
+----------------------------------------------------------------------
+CodeQL Readiness Gate
+----------------------------------------------------------------------
+  Status: enabled
+  Reason: enabled
+  Message: CodeQL ready for 0 language(s)
+
+----------------------------------------------------------------------
+Attack Surface
+----------------------------------------------------------------------
+  HTTP Endpoints: 72
+  RPC Services: 0
+  Total Entry Points: 72
+
+----------------------------------------------------------------------
+Scan Phases
+----------------------------------------------------------------------
+  semgrep: FAILED - Failed to parse Semgrep output: [00.11][ERROR]: -e/--pattern and -l/--lang must both be specified
+
+  codeql: FAILED - All CodeQL suites failed. First failure: java-security-extended
+  agent: FAILED - Agent failed: failure rate 54.5% >= threshold 50%
+
+----------------------------------------------------------------------
+Statistics
+----------------------------------------------------------------------
+  Total Findings: 15
+  Verified: 15
+  Exploitable Findings: 2
+  Needs Review: 7
+  Informational: 6
+  Token Usage:
+    - Prompt Tokens: 170738
+    - Completion Tokens: 80491
+    - Total Tokens: 251229
+  By Exploitability:
+    - exploitable: 4
+    - needs_review: 2
+    - not_exploitable: 6
+    - conditional: 2
+    - unlikely: 1
+  By Adversarial Verdict:
+    - CONFIRMED: 4
+    - NEEDS_REVIEW: 2
+    - FALSE_POSITIVE: 3
+  By Report Status:
+    - exploitable: 2
+    - conditional: 7
+    - informational: 6
+
+----------------------------------------------------------------------
+Errors
+----------------------------------------------------------------------
+  - Agent failed: failure rate 54.5% >= threshold 50%
+
+
+======================================================================
+End of Report
+======================================================================

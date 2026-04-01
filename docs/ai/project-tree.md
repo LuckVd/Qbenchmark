@@ -4,7 +4,7 @@
 
 ```text
 Qbenchmark/
-├── java-vuln-lab/                    # Spring Boot 靶场应用
+├── java-test-app/                    # Spring Boot 靶场应用
 │   ├── src/main/java/com/vulnlab/
 │   │   ├── VulnLabApplication.java            # 应用入口
 │   │   ├── controller/                         # 漏洞控制器 (17个)
@@ -84,14 +84,14 @@ Qbenchmark/
 
 ## Key Entry Points
 
-- 主靶场入口: `java-vuln-lab/src/main/java/com/vulnlab/VulnLabApplication.java`
-- 主靶场启动: `cd java-vuln-lab && mvn spring-boot:run`
+- 主靶场入口: `java-test-app/src/main/java/com/vulnlab/VulnLabApplication.java`
+- 主靶场启动: `cd java-test-app && mvn spring-boot:run`
 - 验证测试: `bash validation/quick_validate.sh`
 - Docker 启动: `docker-compose up` (G06)
 
 ## Key Config Files
 
-- Maven 配置: `java-vuln-lab/pom.xml`
+- Maven 配置: `java-test-app/pom.xml`
 - Docker 编排: `docker-compose.yml`
 - Claude 设置: `.claude/settings.local.json`
 - 工作流状态: `docs/ai/current-goal.state.yaml`

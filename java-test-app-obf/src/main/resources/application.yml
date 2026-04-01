@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: java-vuln-obf
+    name: java-test-app-obf
 
   datasource:
     url: jdbc:h2:mem:testdb
