@@ -11,8 +11,8 @@ security_blockers: []
 dead_code_actions: []
 goal_candidates:
   - G22 混淆靶场已完成，可开始新目标或扩展混淆功能
-sync_status: unsynced
-last_synced_commit: 3a24796
+sync_status: synced
+last_synced_commit: 935d795
 last_check_at: '2026-04-01'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
