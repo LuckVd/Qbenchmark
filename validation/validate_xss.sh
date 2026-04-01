@@ -38,15 +38,15 @@ test_case() {
 echo -e "${BLUE}=== Web Render Tests ===${NC}"
 
 test_case "Reflected XSS" \
-    "${BASE_URL}/api/v1/web/render?content=<script>alert(1)</script>" \
+    "${BASE_URL}/api/v1/web/render?content=%3Cscript%3Ealert(1)%3C/script%3E" \
     "<script>alert"
 
 test_case "Search XSS" \
-    "${BASE_URL}/api/v1/web/search?q=<img src=x onerror=alert(1)>" \
+    "${BASE_URL}/api/v1/web/search?q=%3Cimg%20src=x%20onerror=alert(1)%3E" \
     "<img|alert"
 
 test_case "Stored XSS" \
-    "${BASE_URL}/api/v1/web/store?data=<script>alert(document.cookie)</script>" \
+    "${BASE_URL}/api/v1/web/store?data=%3Cscript%3Ealert(document.cookie)%3C/script%3E" \
     "script|cookie"
 
 test_case "Show XSS" \
