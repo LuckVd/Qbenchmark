@@ -11,7 +11,7 @@ security_blockers: []
 dead_code_actions: []
 goal_candidates: []
 sync_status: synced
-last_synced_commit: f8a4d55
+last_synced_commit: 8074aee
 last_check_at: '2026-04-01'
 last_security_scan_at: '2026-03-31'
 last_deadcode_scan_at: '2026-03-31'
@@ -29,7 +29,7 @@ completed_goals:
   - G10: 其他注入类漏洞 (6420461)
   - G11-G21: 高中低危漏洞 (fd78241)
   - G22: 混淆靶场建设 (935d795)
-  - G23: 语义信息移除 (da9f779)
+  - G23: 语义信息移除 (8074aee)
 validation_scripts:
   - validate_sqli.sh: SQL 注入 (路径已更新)
   - validate_cmd.sh: 命令注入 (路径已更新)
