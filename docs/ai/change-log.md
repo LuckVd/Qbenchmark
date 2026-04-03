@@ -1,5 +1,23 @@
 # Change Log
 
+## 2026-04-03 (配置修复 - G23 遗留)
+
+- Goal ID: 配置修复 (无活跃目标)
+- Summary: 混淆靶场包名重命名 + ProGuard 配置修复
+- Impact: `java-test-app-obf/`
+- Changes:
+  - **混淆靶场包重命名**: `com.vulnobf` → `com.webapp.core`
+    - 30 个文件从 `com/vulnobf/` 迁移到 `com/webapp/core/`
+    - 类名通用化 (ObfApplication → WebApplication, ObfConfiguration → WebConfiguration)
+    - 工具类简化 (StringObfuscator → StringBuilder)
+  - **ProGuard 配置修复**: `proguard-maven-plugin` 2.6.0 → 2.6.1
+    - 修复与 ProGuard 7.3.2 的兼容性问题
+    - 解决 CodeQL 扫描时的 NoSuchMethodError
+  - **application.yml**: 更新配置以匹配新包名
+- Tests: 构建通过 ✅
+- Security: 无安全问题 (仅测试凭据，无真实密钥)
+- Commit: pending
+
 ## 2026-04-01 (G23 语义信息移除)
 
 - Goal ID: G23 (语义信息移除)

@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.vulnobf</groupId>
-    <artifactId>java-vuln-obf</artifactId>
+    <groupId>com.webapp.core</groupId>
+    <artifactId>web-platform-core</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Java Vulnerability Lab - Obfuscated</name>
-    <description>Obfuscated Java vulnerability lab for static analysis testing</description>
+    <name>Web Application Platform</name>
+    <description>Enterprise web platform for data processing and system integration</description>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -32,6 +32,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Spring Boot JDBC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
         <!-- MySQL Driver -->
         <dependency>
             <groupId>mysql</groupId>
@@ -46,7 +52,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Log4j (vulnerable version) -->
+        <!-- Log4j -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -78,28 +84,28 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Fastjson 1.2.24 (vulnerable) -->
+        <!-- Fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.24</version>
         </dependency>
 
-        <!-- Shiro 1.2.4 (vulnerable) -->
+        <!-- Shiro -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
             <version>1.2.4</version>
         </dependency>
 
-        <!-- Commons Collections 3.1 -->
+        <!-- Commons Collections -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.1</version>
         </dependency>
 
-        <!-- DOM4J 2.0.0 -->
+        <!-- DOM4J -->
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -113,28 +119,28 @@
             <version>2.0.6</version>
         </dependency>
 
-        <!-- QLExpress 3.3.4 -->
+        <!-- QLExpress -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>QLExpress</artifactId>
             <version>3.3.4</version>
         </dependency>
 
-        <!-- Velocity 2.3 -->
+        <!-- Velocity -->
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-engine-core</artifactId>
             <version>2.3</version>
         </dependency>
 
-        <!-- FreeMarker 2.3.31 -->
+        <!-- FreeMarker -->
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.31</version>
         </dependency>
 
-        <!-- JWT 0.9.1 (vulnerable) -->
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
@@ -153,21 +159,21 @@
             <version>2.11.0</version>
         </dependency>
 
-        <!-- XStream 1.4.10 (vulnerable) -->
+        <!-- XStream -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.4.10</version>
         </dependency>
 
-        <!-- SnakeYaml 1.27 (vulnerable) -->
+        <!-- SnakeYaml -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.27</version>
         </dependency>
 
-        <!-- Groovy 2.5.6 (vulnerable) -->
+        <!-- Groovy -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -194,7 +200,7 @@
             <plugin>
                 <groupId>com.github.wvengen</groupId>
                 <artifactId>proguard-maven-plugin</artifactId>
-                <version>2.6.0</version>
+                <version>2.6.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -214,15 +220,13 @@
                         <option>-useuniqueclassmembernames</option>
                         <option>-ignorewarnings</option>
                         <option>-keepattributes Signature,Exceptions,*Annotation*,InnerClasses,EnclosingMethod</option>
-                        <option>-keep public class com.vulnobf.ObfApplication { *; }</option>
+                        <option>-keep public class com.webapp.core.WebApplication { *; }</option>
                         <option>-keep public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keep class org.springframework.boot.loader.** { *; }</option>
                         <option>-keep class org.springframework.** { *; }</option>
                         <option>-dontnote **</option>
                         <option>-dontwarn **</option>
-                        <!-- Obfuscation options -->
                         <option>-allowaccessmodification</option>
-                        <!-- String obfuscation -->
                         <option>-adaptclassstrings</option>
                     </options>
                     <libs>
